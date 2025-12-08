@@ -1,0 +1,12 @@
+// wrangler.jsonc
+{
+  "name": "anfioo-blog", // 你的 Worker/Pages 项目名（自定义）
+  "compatibility_date": "2025-12-08", // 兼容日期（填当前日期即可）
+  "assets": {
+    "directory": "./dist" // 指向 Astro 构建的静态资源目录
+  },
+  // 可选：如果部署到 Pages，补充以下配置
+  "pages": {
+    "entry-point": "./dist"
+  }
+}
