@@ -100,3 +100,16 @@ export type BlogPostData = {
 export type ExpressiveCodeConfig = {
 	theme: string;
 };
+
+
+export type TodoItem = {
+    content: string;
+    completed: boolean;
+};
+
+export type TodoConfig = {
+    enable: boolean;
+    title: string;
+    items: TodoItem[];
+};
+
