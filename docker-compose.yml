@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  my-blog:
+    # 使用官方的 Nginx 镜像
+    image: nginx:alpine
+    # 给容器起一个友好的名字，方便管理
+    container_name: my-blog
+    # 端口映射：将主机的 7878 端口映射到容器的 80 端口
+    ports:
+      - "7878:80"
+    # 卷挂载：将当前目录下的 dist 文件夹挂载到 Nginx 的默认网站目录
+    # 这里的 ./dist 是相对于 docker-compose.yml 文件的路径
+    volumes:
+      - ./dist:/usr/share/nginx/html
+    # 保持容器在后台运行
+    restart: always
