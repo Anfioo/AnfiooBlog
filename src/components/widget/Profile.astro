@@ -102,7 +102,7 @@ const config = profileConfig;
     async function loadSiteStats() {
         try {
             // 请求指定接口获取统计数据
-            const statsResponse = await fetch('http://datapivot.dpdns.org/', {
+            const statsResponse = await fetch('https://datapivot.dpdns.org/', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
