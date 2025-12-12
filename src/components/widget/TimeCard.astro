@@ -109,8 +109,8 @@ const style = Astro.props.style;
         const nextYear = new Date(now.getFullYear() + 1, 0, 1);
         const yearProgress = (now.getTime() - startOfYear.getTime()) / (nextYear.getTime() - startOfYear.getTime()) * 100;
 
-        const birthDate = new Date('2007-09-20T00:00:00');
-        const deathDate = new Date('2107-09-20T00:00:00'); // 100 years? User code said 80 years but logic was 2107-2007 = 100.
+        const birthDate = new Date('2003-12-22T00:00:00');
+        const deathDate = new Date('2103-12-22T00:00:00'); // 100 years? User code said 80 years but logic was 2107-2007 = 100.
         // Re-checking previous code: 2007 to 2107 is 100 years. Previous comment said "80 years" but code used 2107. I'll stick to code.
         const lifeProgress = Math.max(0, Math.min(100, (now.getTime() - birthDate.getTime()) / (deathDate.getTime() - birthDate.getTime()) * 100));
 

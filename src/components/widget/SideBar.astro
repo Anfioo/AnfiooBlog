@@ -5,6 +5,7 @@ import Profile from "./Profile.astro";
 import Tag from "./Tags.astro";
 import Todo from "@components/widget/Todo.astro";
 import TimeCard from "@components/widget/TimeCard.astro";
+import BrowsingData from "@components/widget/BrowsingData.astro";
 
 
 interface Props {
@@ -23,6 +24,7 @@ const className = Astro.props.class;
         <Tag class="onload-animation" style="animation-delay: 200ms"></Tag>
         <Todo class="onload-animation" style="animation-delay: 250ms"></Todo>
         <TimeCard class="onload-animation" style="animation-delay: 300ms"></TimeCard>
+        <BrowsingData class="onload-animation" style="animation-delay: 300ms"></BrowsingData>
 
     </div>
 </div>

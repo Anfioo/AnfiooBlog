@@ -1,9 +1,9 @@
 ---
-title: Maven 的多模块（Multi-Module）管理方式
+title: Maven 的多模块管理方式经验分享
 published: 2024-04-01
 description: "Maven 的多模块（Multi-Module）管理方式"
 tags: ["Maven", "Java", "Redis","MySQL"]
-category: Guides
+category: Experience
 draft: false
 ---
 
@@ -51,22 +51,22 @@ Maven 的多模块（Multi-Module）管理方式，根目录下有一个总的 `
 1.以 idea 为例，创建如下
 
 
-![image-20250708165141844](p1.png)
+![](p1.png)
 
 2.删掉无需的文件（因为项目的 pom 文件只是作为依赖管理使用）
 
 
-![image-20250708165141844](p2.png)
+![](p2.png)
 
 
 3.最终如下
 
-![image-20250708165141844](p3.png)
+![](p3.png)
 
 添加一些标签
 
 
-![image-20250708165141844](p4.png)
+![](p4.png)
 
 代码如下
 
@@ -156,18 +156,18 @@ Maven 的多模块（Multi-Module）管理方式，根目录下有一个总的 `
 
 
 
-![image-20250708165141844](p5.png)
+![](p5.png)
 
 ### 创建模块 module-common 示例
 
-![image-20250708165141844](p6.png)
+![](p6.png)
 
 > module-common 为公共模块，存放通用的工具类、常量、基础实体、异常处理等，供其他模块依赖。
 
-![image-20250708165141844](p7.png)
+![](p7.png)
 
 
-![image-20250708165141844](p8.png)
+![](p8.png)
 
 一个基本的子模块就是这样了
 
@@ -214,7 +214,7 @@ Maven 的多模块（Multi-Module）管理方式，根目录下有一个总的 `
 | 父模块可以是本地项目，也可以是远程依赖 | 比如继承 `spring-boot-starter-parent`，就是远程继承。        |
 
 此时 idea 会自动配置父模块下的子模块 module-common
-![image-20250708165141844](p9.png)
+![](p9.png)
 
 
 子模块代码如下
@@ -253,16 +253,16 @@ Maven 的多模块（Multi-Module）管理方式，根目录下有一个总的 `
 继续生成 module-admin 如下
 
 
-![image-20250708165141844](p10.png)
+![](p10.png)
 
 A-N-F-I-O-O 是由于我配置了名称 就是上面的 multi-module
 
 
-![image-20250708165141844](p11.png)
+![](p11.png)
 
 父项目 pom 设计
 
-![image-20250708165141844](p12.png)
+![](p12.png)
 
 !
 
@@ -690,7 +690,7 @@ Spring Boot 官方推荐在你自定义的 `parent pom` 中，**通过 `dependen
 ## 总预览结构图
 
 
-![image-20250708165141844](p13.png)
+![](p13.png)
 
 
 ## 项目结构优点
@@ -713,7 +713,7 @@ Spring Boot 官方推荐在你自定义的 `parent pom` 中，**通过 `dependen
 ##  common 主要包和类说明
 
 
-![image-20250708165141844](p14.png)
+![](p14.png)
 ### 介绍
 
 **1）bean/**
@@ -1363,7 +1363,7 @@ public class PasswordUtils {
 ## admin 主要包和类说明
 
 
-![image-20250708165141844](p15.png)
+![](p15.png)
 
 ### 介绍
 
@@ -1614,7 +1614,7 @@ server:
 ## sys 主要包和类说明
 
 
-![image-20250708165141844](p16.png)
+![](p16.png)
 
 **1）controller/**
 

@@ -1,27 +1,148 @@
 ---
-title: Expressive Code Example
-published: 2024-04-10
-description: How code blocks look in Markdown using Expressive Code.
+title: Markdown 语法示例
+published: 2024-05-01
+updated: 2024-11-29
+description: 'Read more about Markdown features in Fuwari'
+image: ''
+tags: [Demo, Example, Markdown, Fuwari]
+category: 'Examples'
+draft: false 
+---
+
+根据你提供的 Markdown 扩展功能示例，以下是这些扩展语法的总结：
+
+## GitHub 仓库卡片
+
+用于展示 GitHub 仓库信息的动态卡片。
+
+```markdown
+::github{repo="用户名/仓库名"}
+```
+
+
+示例：
+```markdown
+::github{repo="Anfioo/AnfiooBlog"}
+```
+::github{repo="Anfioo/AnfiooBlog"}
+
+## 提示框（Admonitions）
+
+支持多种类型的提示框：`note`、`tip`、`important`、`warning`、`caution`。
+
+### 基本语法
+
+```markdown
+:::note
+这是一个 note 类型的提示框。
+:::
+
+:::tip
+这是一个 tip 类型的提示框。
+:::
+```
+:::note
+这是一个 note 类型的提示框。
+:::
+
+:::tip
+这是一个 tip 类型的提示框。
+:::
+
+### 自定义标题
+
+可以在类型后添加自定义标题。
+
+```markdown
+:::note[我的自定义标题]
+这是带有自定义标题的 note 提示框。
+:::
+```
+:::note[我的自定义标题]
+这是带有自定义标题的 note 提示框。
+:::
+
+### GitHub 风格语法
+
+也支持 GitHub 风格的提示框语法。
+
+```markdown
+> [!NOTE]
+> 这是 GitHub 风格的 note 提示框。
+
+> [!TIP]
+> 这是 GitHub 风格的 tip 提示框。
+```
+> [!NOTE]
+> 这是 GitHub 风格的 note 提示框。
+
+> [!TIP]
+> 这是 GitHub 风格的 tip 提示框。
+
+## 剧透文本（Spoiler）
+
+隐藏部分文本内容，鼠标悬停或点击时显示。
+
+```markdown
+内容 :spoiler[被隐藏的文字 **粗体也可以**]!
+```
+内容 :spoiler[被隐藏的文字 **粗体也可以**]!
+
+示例：
+```markdown
+The content :spoiler[is hidden **ayyy**]!
+```
+The content :spoiler[is hidden **ayyy**]!
+
+
+
+
+### 草稿状态控制
+- 通过 `draft` 字段控制文章是否为草稿状态
+- `draft: true` 表示文章处于草稿状态，不会对公众可见
+- `draft: false` 表示文章已发布，对公众可见
+
+### Frontmatter 配置示例
+
+```markdown
+---
+title: Draft Example
+published: 2022-07-01
+tags: [Markdown, Blogging, Demo]
+category: Examples
+draft: true
+---
+```
+
+
+### 发布草稿
+当文章准备就绪时，将 `draft` 字段从 `true` 改为 `false` 即可发布：
+
+```markdown
+---
+title: Draft Example
+published: 2024-01-11T04:40:26.381Z
 tags: [Markdown, Blogging, Demo]
 category: Examples
 draft: false
 ---
+```
 
-Here, we'll explore how code blocks look using [Expressive Code](https://expressive-code.com/). The provided examples are based on the official documentation, which you can refer to for further details.
 
-## Expressive Code
 
-### Syntax Highlighting
+## 美化 Markdown 中的代码块。提供的示例基于官方文档，你可以参考官方文档获取更多详细信息。
 
-[Syntax Highlighting](https://expressive-code.com/key-features/syntax-highlighting/)
+### 语法高亮
 
-#### Regular syntax highlighting
+[语法高亮](https://expressive-code.com/key-features/syntax-highlighting/)
+
+#### 常规语法高亮
 
 ```js
 console.log('This code is syntax highlighted!')
 ```
 
-#### Rendering ANSI escape sequences
+#### 渲染 ANSI 转义序列
 
 ```ansi
 ANSI colors:
@@ -40,11 +161,11 @@ Full RGB colors:
 Text formatting: [1mBold[0m [2mDimmed[0m [3mItalic[0m [4mUnderline[0m
 ```
 
-### Editor & Terminal Frames
+### 编辑器与终端框架
 
-[Editor & Terminal Frames](https://expressive-code.com/key-features/frames/)
+[编辑器与终端框架](https://expressive-code.com/key-features/frames/)
 
-#### Code editor frames
+#### 代码编辑器框架
 
 ```js title="my-test-file.js"
 console.log('Title attribute example')
@@ -57,7 +178,7 @@ console.log('Title attribute example')
 <div>File name comment example</div>
 ```
 
-#### Terminal frames
+#### 终端框架
 
 ```bash
 echo "This terminal frame has no title"
@@ -69,7 +190,7 @@ echo "This terminal frame has no title"
 Write-Output "This one has a title!"
 ```
 
-#### Overriding frame types
+#### 覆盖框架类型
 
 ```sh frame="none"
 echo "Look ma, no frame!"
@@ -83,11 +204,11 @@ function Watch-Tail { Get-Content -Tail 20 -Wait $args }
 New-Alias tail Watch-Tail
 ```
 
-### Text & Line Markers
+### 文本和行标记
 
-[Text & Line Markers](https://expressive-code.com/key-features/text-markers/)
+[文本和行标记](https://expressive-code.com/key-features/text-markers/)
 
-#### Marking full lines & line ranges
+#### 标记整行和行范围
 
 ```js {1, 4, 7-8}
 // Line 1 - targeted by line number
@@ -100,7 +221,7 @@ New-Alias tail Watch-Tail
 // Line 8 - targeted by range "7-8"
 ```
 
-#### Selecting line marker types (mark, ins, del)
+#### 选择行标记类型 (mark, ins, del)
 
 ```js title="line-markers.js" del={2} ins={3-4} {6}
 function demo() {
@@ -112,7 +233,7 @@ function demo() {
 }
 ```
 
-#### Adding labels to line markers
+#### 为行标记添加标签
 
 ```jsx {"1":5} del={"2":7-8} ins={"3":10-12}
 // labeled-line-markers.jsx
@@ -130,7 +251,7 @@ function demo() {
 </button>
 ```
 
-#### Adding long labels on their own lines
+#### 在单独的行上添加长标签
 
 ```jsx {"1. Provide the value prop here:":5-6} del={"2. Remove the disabled and active states:":8-10} ins={"3. Add this to render the children inside the button:":12-15}
 // labeled-line-markers.jsx
@@ -151,7 +272,7 @@ function demo() {
 </button>
 ```
 
-#### Using diff-like syntax
+#### 使用类似 diff 的语法
 
 ```diff
 +this line will be marked as inserted
@@ -170,7 +291,7 @@ this is a regular line
  no whitespace will be removed either
 ```
 
-#### Combining syntax highlighting with diff-like syntax
+#### 结合语法高亮和类似 diff 的语法
 
 ```diff lang="js"
   function thisIsJavaScript() {
@@ -181,7 +302,7 @@ this is a regular line
   }
 ```
 
-#### Marking individual text inside lines
+#### 标记行内的单个文本
 
 ```js "given text"
 function demo() {
@@ -190,19 +311,19 @@ function demo() {
 }
 ```
 
-#### Regular expressions
+#### 正则表达式
 
 ```ts /ye[sp]/
 console.log('The words yes and yep will be marked.')
 ```
 
-#### Escaping forward slashes
+#### 转义正斜杠
 
 ```sh /\/ho.*\//
 echo "Test" > /home/test.txt
 ```
 
-#### Selecting inline marker types (mark, ins, del)
+#### 选择行内标记类型 (mark, ins, del)
 
 ```js "return true;" ins="inserted" del="deleted"
 function demo() {
@@ -212,11 +333,11 @@ function demo() {
 }
 ```
 
-### Word Wrap
+### 自动换行
 
-[Word Wrap](https://expressive-code.com/key-features/word-wrap/)
+[自动换行](https://expressive-code.com/key-features/word-wrap/)
 
-#### Configuring word wrap per block
+#### 为每个代码块配置自动换行
 
 ```js wrap
 // Example with wrap
@@ -234,7 +355,7 @@ function getLongString() {
 }
 ```
 
-#### Configuring indentation of wrapped lines
+#### 配置换行的缩进
 
 ```js wrap preserveIndent
 // Example with preserveIndent (enabled by default)
@@ -252,9 +373,9 @@ function getLongString() {
 }
 ```
 
-## Collapsible Sections
+## 可折叠部分
 
-[Collapsible Sections](https://expressive-code.com/plugins/collapsible-sections/)
+[可折叠部分](https://expressive-code.com/plugins/collapsible-sections/)
 
 ```js collapse={1-5, 12-14, 21-24}
 // All this boilerplate setup code will be collapsed
@@ -283,11 +404,11 @@ engine.freeMemory()
 engine.shutdown({ reason: 'End of example boilerplate code' })
 ```
 
-## Line Numbers
+## 行号
 
-[Line Numbers](https://expressive-code.com/plugins/line-numbers/)
+[行号](https://expressive-code.com/plugins/line-numbers/)
 
-### Displaying line numbers per block
+### 为每个代码块显示行号
 
 ```js showLineNumbers
 // This code block will show line numbers
@@ -303,9 +424,76 @@ console.log('Hello?')
 console.log('Sorry, do you know what line I am on?')
 ```
 
-### Changing the starting line number
+### 更改起始行号
 
 ```js showLineNumbers startLineNumber=5
 console.log('Greetings from line 5!')
 console.log('I am on line 6')
 ```
+
+
+## 放入视频
+
+```yaml
+---
+title: 视频
+published: 2023-10-19
+// ...
+---
+<iframe width="100%" height="468" src="//player.bilibili.com/player.html?bvid=BV1fK4y1s7Qf&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+```
+
+## Bilibili
+
+<iframe width="100%" height="468" src="//player.bilibili.com/player.html?bvid=BV1fK4y1s7Qf&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+
+
+## 公式
+
+$$I = \int \rho R^{2} dV$$
+
+$$
+\begin{equation*}
+\pi
+=3.1415926535
+\;8979323846\;2643383279\;5028841971\;6939937510\;5820974944
+\;5923078164\;0628620899\;8628034825\;3421170679\;\ldots
+\end{equation*}
+$$
+
+
+## 脚注和其他
+
+
+段落之间用空行分隔。
+
+第二段内容。_斜体_、**粗体**和`等宽字体`。无序列表如下：
+
+- 第一项
+- 第二项
+- 第三项
+
+> 块引用的写法如下。
+>
+> 块引用可以跨多个段落，
+> 按需添加即可。
+
+用三个连字符表示破折号（——），两个连字符表示范围（例如“章节12--14”），三个点会被转换为省略号（……）。支持Unicode字符 ☺
+
+## 二级标题示例
+
+这是一个有序列表：
+
+1. 第一项
+2. 第二项
+3. 第三项
+
+这里有一个链接指向[外部网站](https://github.com/Anfioo/AnfiooBlog)，以及指向[当前文档的章节](#二级标题示例)。这里有一个脚注[^1]。
+
+这里有一个链接指向[外部网站](https://github.com/Anfioo/AnfiooBlog)，以及指向[当前文档的章节](#二级标题示例)。这里有一个脚注[^2]。
+
+
+[^1]: 这是第一个脚注的内容，比如解释某个概念、标注引用文献，或补充正文未展开的细节。
+[^2]: 这是第一个脚注的内容，比如解释某个概念、标注引用文献，或补充正文未展开的细节。
+
+

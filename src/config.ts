@@ -61,7 +61,7 @@ export const navBarConfig: NavBarConfig = {
 		},
         {
             name: "统计",
-            url: "https://umami-six-mauve.vercel.app/share/33ojQzMxbqiIxw8j", // Internal links should not include the base path, as it is automatically added
+            url: "https://umami.anfiooblog.dpdns.org/share/oVgfTSaf1RHIACYU", // Internal links should not include the base path, as it is automatically added
             // url: "https://cloud.umami.is/share/BkVzuhakMkNzoZlc", // Internal links should not include the base path, as it is automatically added
             external: true, // Show an external link icon and will open in a new tab
         }
