@@ -1,9 +1,14 @@
 # About
-This is the demo site for [Fuwari](https://github.com/saicaca/fuwari).
 
-::github{repo="saicaca/fuwari"}
+项目源码请参考 [Anfioo](https://github.com/Anfioo/AnfiooBlog).
 
-> ### Sources of images used in this site
-> - [Unsplash](https://unsplash.com/)
-> - [星と少女](https://www.pixiv.net/artworks/108916539) by [Stella](https://www.pixiv.net/users/93273965)
-> - [Rabbit - v1.4 Showcase](https://civitai.com/posts/586908) by [Rabbit_YourMajesty](https://civitai.com/user/Rabbit_YourMajesty)
+::github{repo="Anfioo/AnfiooBlog"}
+
+> ### 个人信息
+
+
+>- [知乎](https://www.zhihu.com/people/54-37-39-24)
+>- [CSDN](https://blog.csdn.net/m0_73579391)
+>- [稀土掘金](https://juejin.cn/user/983410267923659)
+>- [知乎](https://www.cnblogs.com/Anfioo)
+
