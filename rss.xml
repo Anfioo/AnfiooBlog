@@ -1,0 +1,2381 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Anfioo - Anfioo&amp;apos;s Blog</title><description>Firefly 是一款基于 Astro 框架和 Fuwari 模板开发的清新美观且现代化个人博客主题模板，专为技术爱好者和内容创作者设计。该主题融合了现代 Web 技术栈，提供了丰富的功能模块和高度可定制的界面，让您能够轻松打造出专业且美观的个人博客网站。</description><link>https://anfiooblog.dpdns.org/</link><language>zh_CN</language><item><title>Git合并俩个分支并保留提交记录</title><link>https://anfiooblog.dpdns.org/posts/git%E5%90%88%E5%B9%B6%E4%BF%A9%E4%B8%AA%E5%88%86%E6%94%AF%E5%B9%B6%E4%BF%9D%E7%95%99%E6%8F%90%E4%BA%A4%E8%AE%B0%E5%BD%95/</link><guid isPermaLink="true">https://anfiooblog.dpdns.org/posts/git%E5%90%88%E5%B9%B6%E4%BF%A9%E4%B8%AA%E5%88%86%E6%94%AF%E5%B9%B6%E4%BF%9D%E7%95%99%E6%8F%90%E4%BA%A4%E8%AE%B0%E5%BD%95/</guid><description>Git合并俩个分支并保留提交记录</description><pubDate>Fri, 12 Dec 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;结合你的实际操作场景（Windows 环境、分支为 main 而非 master、两个子项目 backend/model），我帮你补全完整的合并步骤，同时适配 Windows 命令行的特性（避免 Linux 下的 extglob 语法问题）：&lt;/p&gt;
+&lt;p&gt;我有俩个子项目 &lt;code&gt;mmjd-model-service&lt;/code&gt; 和 &lt;code&gt;mmjd-backend&lt;/code&gt;，现在需要将它们合并到一个新的仓库中,并且保留提交记录。&lt;/p&gt;
+&lt;p&gt;项目1提交记录&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;p1.png&quot; alt=&quot;p1.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;项目2提交记录&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;p2.png&quot; alt=&quot;p2.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;注意时间&lt;/p&gt;
+&lt;p&gt;第一步创建要合并的文件主夹 MultimodalMockInterviewSystem&lt;/p&gt;
+&lt;p&gt;mkdir MultimodalMockInterviewSystem
+cd MultimodalMockInterviewSystem
+git init
+进入目录初始化新的git&lt;/p&gt;
+&lt;p&gt;2.在 MultimodalMockInterviewSystem 中添加俩个要合并项目的远程分支&lt;/p&gt;
+&lt;p&gt;git remote add origin_backend http://localhost:23000/anfioo/mmjd-backend.git
+git remote add origin_model http://localhost:23000/anfioo/mmjd-model-service.git&lt;/p&gt;
+&lt;p&gt;验证是否添加成功&lt;/p&gt;
+&lt;p&gt;git remote -v&lt;/p&gt;
+&lt;p&gt;如图
+&lt;img src=&quot;p3.png&quot; alt=&quot;p3.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;4.在 MultimodalMockInterviewSystem 目录下，获取 俩个想要合并的 分支数据&lt;/p&gt;
+&lt;p&gt;git fetch origin_backend
+git fetch origin_model&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;p4.png&quot; alt=&quot;p4.png&quot; /&gt;&lt;/p&gt;
+&lt;h3&gt;完整操作步骤&lt;/h3&gt;
+&lt;h4&gt;第一步：合并 &lt;code&gt;mmjd-model-service&lt;/code&gt; 并移动到子目录&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;# 1. 合并model项目的main分支（允许无关历史）
+git merge origin_model/main --allow-unrelated-histories
+
+# 2. 新建model子目录（命名为model_service，可自定义）
+mkdir model_service
+
+# 3. 【Windows cmd适配】移动所有文件到model_service（排除.git和model_service本身）
+# 方式1：cmd命令（推荐，无需额外配置）
+for /d %i in (*) do if not &quot;%i&quot;==&quot;.git&quot; if not &quot;%i&quot;==&quot;model_service&quot; move &quot;%i&quot; model_service\
+for %i in (*) do if not &quot;%i&quot;==&quot;.git&quot; if not &quot;%i&quot;==&quot;model_service&quot; move &quot;%i&quot; model_service\
+
+# 方式2：若用Git Bash（避免!语法报错）
+# shopt -s extglob
+# mv !(.|..|.git|model_service) model_service/
+
+# 4. 提交合并+移动的记录
+git add .
+git commit -m &quot;merge mmjd-model-service main branch and move to model_service directory&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;第二步：合并 &lt;code&gt;mmjd-backend&lt;/code&gt; 并移动到子目录&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;# 1. 合并backend项目的main分支（允许无关历史）
+git merge origin_backend/main --allow-unrelated-histories
+
+# 2. 新建backend子目录
+mkdir backend
+
+# 3. 【Windows cmd适配】移动剩余文件到backend（排除.git、model_service、backend）
+for /d %i in (*) do if not &quot;%i&quot;==&quot;.git&quot; if not &quot;%i&quot;==&quot;model_service&quot; if not &quot;%i&quot;==&quot;backend&quot; move &quot;%i&quot; backend\
+for %i in (*) do if not &quot;%i&quot;==&quot;.git&quot; if not &quot;%i&quot;==&quot;model_service&quot; if not &quot;%i&quot;==&quot;backend&quot; move &quot;%i&quot; backend\
+
+# 4. 提交合并+移动的记录
+git add .
+git commit -m &quot;merge mmjd-backend main branch and move to backend directory&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;第三步：关联最终的远程仓库并推送&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;# 1. 添加最终的远程仓库地址（替换为你的all仓库地址）
+git remote add origin http://localhost:23000/anfioo/MultimodalMockInterviewSystem.git
+
+# 2. 推送main分支到远程（-u 绑定上游分支）
+git push -u origin main
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;关键注意事项（适配你的场景）&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;分支名适配&lt;/strong&gt;：你的子项目分支是 &lt;code&gt;main&lt;/code&gt; 而非示例中的 &lt;code&gt;master&lt;/code&gt;，合并时需用 &lt;code&gt;origin_model/main&lt;/code&gt;/&lt;code&gt;origin_backend/main&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Windows 移动文件适配&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;避免 Linux 下的 &lt;code&gt;!(.|..|.git)&lt;/code&gt; 语法（Windows cmd 不支持），改用 &lt;code&gt;for&lt;/code&gt; 循环遍历并排除目标目录。&lt;/li&gt;
+&lt;li&gt;若使用 Git Bash（推荐），可先执行 &lt;code&gt;shopt -s extglob&lt;/code&gt; 开启扩展通配，再用 &lt;code&gt;mv !(.|..|.git|model_service) model_service/&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;合并冲突处理&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;若合并时提示冲突（如两个项目有同名文件 &lt;code&gt;README.md&lt;/code&gt;），需手动解决冲突后执行 &lt;code&gt;git add 冲突文件&lt;/code&gt; + &lt;code&gt;git commit&lt;/code&gt; 完成合并。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;远程仓库权限&lt;/strong&gt;：确保推送的 &lt;code&gt;origin&lt;/code&gt; 仓库（&lt;code&gt;MultimodalMockInterviewSystem.git&lt;/code&gt;）已创建，且你有写入权限。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;验证结果&lt;/h3&gt;
+&lt;p&gt;合并完成后，你的仓库目录结构应为：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;MultimodalMockInterviewSystem/
+├── backend/          # 原mmjd-backend的所有文件
+├── model_service/    # 原mmjd-model-service的所有文件
+└── .git/             # 保留所有子项目的提交历史
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;查看历史记录（验证提交记录保留）&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;# 查看所有提交记录（包含backend和model的历史）
+git log --oneline --graph --all
+
+# 单独查看model项目的历史
+git log origin_model/main
+
+# 单独查看backend项目的历史
+git log origin_backend/main
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;如果操作中遇到冲突或命令报错，可告诉我具体的错误信息，我会帮你针对性解决。&lt;/p&gt;
+</content:encoded></item><item><title>我的项目展示</title><link>https://anfiooblog.dpdns.org/posts/%E6%88%91%E7%9A%84%E9%A1%B9%E7%9B%AE/</link><guid isPermaLink="true">https://anfiooblog.dpdns.org/posts/%E6%88%91%E7%9A%84%E9%A1%B9%E7%9B%AE/</guid><description>我的项目展示页面</description><pubDate>Thu, 11 Dec 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;我的项目&lt;/h1&gt;
+&lt;p&gt;:::tip[Anfioo/AnfiooBlog]
+Fork 自 saicaca/fuwari [^1] , Astro [^2] 强力驱动 ,参考 afoim/fuwari 部分组件 [^3]
+::github{repo=&quot;Anfioo/AnfiooBlog&quot;}
+:::&lt;/p&gt;
+&lt;p&gt;:::tip[Anfioo/umami]
+Fork 自 umami-software/umami [^4] , 网站统计数据统计功能实现
+::github{repo=&quot;Anfioo/umami&quot;}
+:::&lt;/p&gt;
+&lt;p&gt;:::tip[Anfioo/umami]
+Fork 自 umami-software/umami [^4] , 网站统计数据统计功能实现
+::github{repo=&quot;Anfioo/umami&quot;}
+:::&lt;/p&gt;
+&lt;p&gt;[^1]: 本博客Fork仓库,仓库地址 &lt;a href=&quot;https://github.com/saicaca/fuwari&quot;&gt;saicaca/fuwari&lt;/a&gt;
+[^2]: 本博客构建基石,基础仓库地址 &lt;a href=&quot;https://github.com/withastro/astro&quot;&gt;withastro/astro&lt;/a&gt;
+[^3]: 本博客组件参考,仓库地址 &lt;a href=&quot;https://github.com/afoim/fuwari&quot;&gt;afoim/fuwari&lt;/a&gt;
+[^4]: 本博客访问统计功能实现Fork仓库,基础仓库地址 &lt;a href=&quot;https://github.com/umami-software/umami&quot;&gt;umami-software/umami&lt;/a&gt;&lt;/p&gt;
+</content:encoded></item><item><title>Markdown 语法示例</title><link>https://anfiooblog.dpdns.org/posts/markdown-study/</link><guid isPermaLink="true">https://anfiooblog.dpdns.org/posts/markdown-study/</guid><description>Read more about Markdown features in Fuwari</description><pubDate>Wed, 01 May 2024 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;根据你提供的 Markdown 扩展功能示例，以下是这些扩展语法的总结：&lt;/p&gt;
+&lt;h2&gt;GitHub 仓库卡片&lt;/h2&gt;
+&lt;p&gt;用于展示 GitHub 仓库信息的动态卡片。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;::github{repo=&quot;用户名/仓库名&quot;}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;::github{repo=&quot;Anfioo/AnfiooBlog&quot;}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;::github{repo=&quot;Anfioo/AnfiooBlog&quot;}&lt;/p&gt;
+&lt;h2&gt;提示框（Admonitions）&lt;/h2&gt;
+&lt;p&gt;支持多种类型的提示框：&lt;code&gt;note&lt;/code&gt;、&lt;code&gt;tip&lt;/code&gt;、&lt;code&gt;important&lt;/code&gt;、&lt;code&gt;warning&lt;/code&gt;、&lt;code&gt;caution&lt;/code&gt;。&lt;/p&gt;
+&lt;h3&gt;基本语法&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;:::note
+这是一个 note 类型的提示框。
+:::
+
+:::tip
+这是一个 tip 类型的提示框。
+:::
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;:::note
+这是一个 note 类型的提示框。
+:::&lt;/p&gt;
+&lt;p&gt;:::tip
+这是一个 tip 类型的提示框。
+:::&lt;/p&gt;
+&lt;h3&gt;自定义标题&lt;/h3&gt;
+&lt;p&gt;可以在类型后添加自定义标题。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;:::note[我的自定义标题]
+这是带有自定义标题的 note 提示框。
+:::
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;:::note[我的自定义标题]
+这是带有自定义标题的 note 提示框。
+:::&lt;/p&gt;
+&lt;h3&gt;GitHub 风格语法&lt;/h3&gt;
+&lt;p&gt;也支持 GitHub 风格的提示框语法。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;gt; [!NOTE]
+&amp;gt; 这是 GitHub 风格的 note 提示框。
+
+&amp;gt; [!TIP]
+&amp;gt; 这是 GitHub 风格的 tip 提示框。
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;[!NOTE]
+这是 GitHub 风格的 note 提示框。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;[!TIP]
+这是 GitHub 风格的 tip 提示框。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;剧透文本（Spoiler）&lt;/h2&gt;
+&lt;p&gt;隐藏部分文本内容，鼠标悬停或点击时显示。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;内容 :spoiler[被隐藏的文字 **粗体也可以**]!
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;内容 :spoiler[被隐藏的文字 &lt;strong&gt;粗体也可以&lt;/strong&gt;]!&lt;/p&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;The content :spoiler[is hidden **ayyy**]!
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The content :spoiler[is hidden &lt;strong&gt;ayyy&lt;/strong&gt;]!&lt;/p&gt;
+&lt;h3&gt;草稿状态控制&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;通过 &lt;code&gt;draft&lt;/code&gt; 字段控制文章是否为草稿状态&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;draft: true&lt;/code&gt; 表示文章处于草稿状态，不会对公众可见&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;draft: false&lt;/code&gt; 表示文章已发布，对公众可见&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Frontmatter 配置示例&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;---
+title: Draft Example
+published: 2022-07-01
+tags: [Markdown, Blogging, Demo]
+category: Examples
+draft: true
+---
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;发布草稿&lt;/h3&gt;
+&lt;p&gt;当文章准备就绪时，将 &lt;code&gt;draft&lt;/code&gt; 字段从 &lt;code&gt;true&lt;/code&gt; 改为 &lt;code&gt;false&lt;/code&gt; 即可发布：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;---
+title: Draft Example
+published: 2024-01-11T04:40:26.381Z
+tags: [Markdown, Blogging, Demo]
+category: Examples
+draft: false
+---
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;美化 Markdown 中的代码块。提供的示例基于官方文档，你可以参考官方文档获取更多详细信息。&lt;/h2&gt;
+&lt;h3&gt;语法高亮&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;https://expressive-code.com/key-features/syntax-highlighting/&quot;&gt;语法高亮&lt;/a&gt;&lt;/p&gt;
+&lt;h4&gt;常规语法高亮&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;console.log(&apos;This code is syntax highlighted!&apos;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;渲染 ANSI 转义序列&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;ANSI colors:
+- Regular: [31mRed[0m [32mGreen[0m [33mYellow[0m [34mBlue[0m [35mMagenta[0m [36mCyan[0m
+- Bold:    [1;31mRed[0m [1;32mGreen[0m [1;33mYellow[0m [1;34mBlue[0m [1;35mMagenta[0m [1;36mCyan[0m
+- Dimmed:  [2;31mRed[0m [2;32mGreen[0m [2;33mYellow[0m [2;34mBlue[0m [2;35mMagenta[0m [2;36mCyan[0m
+
+256 colors (showing colors 160-177):
+[38;5;160m160 [38;5;161m161 [38;5;162m162 [38;5;163m163 [38;5;164m164 [38;5;165m165[0m
+[38;5;166m166 [38;5;167m167 [38;5;168m168 [38;5;169m169 [38;5;170m170 [38;5;171m171[0m
+[38;5;172m172 [38;5;173m173 [38;5;174m174 [38;5;175m175 [38;5;176m176 [38;5;177m177[0m
+
+Full RGB colors:
+[38;2;34;139;34mForestGreen - RGB(34, 139, 34)[0m
+
+Text formatting: [1mBold[0m [2mDimmed[0m [3mItalic[0m [4mUnderline[0m
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;编辑器与终端框架&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;https://expressive-code.com/key-features/frames/&quot;&gt;编辑器与终端框架&lt;/a&gt;&lt;/p&gt;
+&lt;h4&gt;代码编辑器框架&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;console.log(&apos;Title attribute example&apos;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;!-- src/content/index.html --&amp;gt;
+&amp;lt;div&amp;gt;File name comment example&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;终端框架&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;echo &quot;This terminal frame has no title&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;pre&gt;&lt;code&gt;Write-Output &quot;This one has a title!&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;覆盖框架类型&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;echo &quot;Look ma, no frame!&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;pre&gt;&lt;code&gt;# Without overriding, this would be a terminal frame
+function Watch-Tail { Get-Content -Tail 20 -Wait $args }
+New-Alias tail Watch-Tail
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;文本和行标记&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;https://expressive-code.com/key-features/text-markers/&quot;&gt;文本和行标记&lt;/a&gt;&lt;/p&gt;
+&lt;h4&gt;标记整行和行范围&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;// Line 1 - targeted by line number
+// Line 2
+// Line 3
+// Line 4 - targeted by line number
+// Line 5
+// Line 6
+// Line 7 - targeted by range &quot;7-8&quot;
+// Line 8 - targeted by range &quot;7-8&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;选择行标记类型 (mark, ins, del)&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;function demo() {
+  console.log(&apos;this line is marked as deleted&apos;)
+  // This line and the next one are marked as inserted
+  console.log(&apos;this is the second inserted line&apos;)
+
+  return &apos;this line uses the neutral default marker type&apos;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;为行标记添加标签&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;// labeled-line-markers.jsx
+&amp;lt;button
+  role=&quot;button&quot;
+  {...props}
+  value={value}
+  className={buttonClassName}
+  disabled={disabled}
+  active={active}
+&amp;gt;
+  {children &amp;amp;&amp;amp;
+    !active &amp;amp;&amp;amp;
+    (typeof children === &apos;string&apos; ? &amp;lt;span&amp;gt;{children}&amp;lt;/span&amp;gt; : children)}
+&amp;lt;/button&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;在单独的行上添加长标签&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;// labeled-line-markers.jsx
+&amp;lt;button
+  role=&quot;button&quot;
+  {...props}
+
+  value={value}
+  className={buttonClassName}
+
+  disabled={disabled}
+  active={active}
+&amp;gt;
+
+  {children &amp;amp;&amp;amp;
+    !active &amp;amp;&amp;amp;
+    (typeof children === &apos;string&apos; ? &amp;lt;span&amp;gt;{children}&amp;lt;/span&amp;gt; : children)}
+&amp;lt;/button&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;使用类似 diff 的语法&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;+this line will be marked as inserted
+-this line will be marked as deleted
+this is a regular line
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;pre&gt;&lt;code&gt;--- a/README.md
++++ b/README.md
+@@ -1,3 +1,4 @@
++this is an actual diff file
+-all contents will remain unmodified
+ no whitespace will be removed either
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;结合语法高亮和类似 diff 的语法&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;  function thisIsJavaScript() {
+    // This entire block gets highlighted as JavaScript,
+    // and we can still add diff markers to it!
+-   console.log(&apos;Old code to be removed&apos;)
++   console.log(&apos;New and shiny code!&apos;)
+  }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;标记行内的单个文本&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;function demo() {
+  // Mark any given text inside lines
+  return &apos;Multiple matches of the given text are supported&apos;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;正则表达式&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;console.log(&apos;The words yes and yep will be marked.&apos;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;转义正斜杠&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;echo &quot;Test&quot; &amp;gt; /home/test.txt
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;选择行内标记类型 (mark, ins, del)&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;function demo() {
+  console.log(&apos;These are inserted and deleted marker types&apos;);
+  // The return statement uses the default marker type
+  return true;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;自动换行&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;https://expressive-code.com/key-features/word-wrap/&quot;&gt;自动换行&lt;/a&gt;&lt;/p&gt;
+&lt;h4&gt;为每个代码块配置自动换行&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;// Example with wrap
+function getLongString() {
+  return &apos;This is a very long string that will most probably not fit into the available space unless the container is extremely wide&apos;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;pre&gt;&lt;code&gt;// Example with wrap=false
+function getLongString() {
+  return &apos;This is a very long string that will most probably not fit into the available space unless the container is extremely wide&apos;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;配置换行的缩进&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;// Example with preserveIndent (enabled by default)
+function getLongString() {
+  return &apos;This is a very long string that will most probably not fit into the available space unless the container is extremely wide&apos;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;pre&gt;&lt;code&gt;// Example with preserveIndent=false
+function getLongString() {
+  return &apos;This is a very long string that will most probably not fit into the available space unless the container is extremely wide&apos;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;可折叠部分&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://expressive-code.com/plugins/collapsible-sections/&quot;&gt;可折叠部分&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// All this boilerplate setup code will be collapsed
+import { someBoilerplateEngine } from &apos;@example/some-boilerplate&apos;
+import { evenMoreBoilerplate } from &apos;@example/even-more-boilerplate&apos;
+
+const engine = someBoilerplateEngine(evenMoreBoilerplate())
+
+// This part of the code will be visible by default
+engine.doSomething(1, 2, 3, calcFn)
+
+function calcFn() {
+  // You can have multiple collapsed sections
+  const a = 1
+  const b = 2
+  const c = a + b
+
+  // This will remain visible
+  console.log(`Calculation result: ${a} + ${b} = ${c}`)
+  return c
+}
+
+// All this code until the end of the block will be collapsed again
+engine.closeConnection()
+engine.freeMemory()
+engine.shutdown({ reason: &apos;End of example boilerplate code&apos; })
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;行号&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://expressive-code.com/plugins/line-numbers/&quot;&gt;行号&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;为每个代码块显示行号&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;// This code block will show line numbers
+console.log(&apos;Greetings from line 2!&apos;)
+console.log(&apos;I am on line 3&apos;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;pre&gt;&lt;code&gt;// Line numbers are disabled for this block
+console.log(&apos;Hello?&apos;)
+console.log(&apos;Sorry, do you know what line I am on?&apos;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;更改起始行号&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;console.log(&apos;Greetings from line 5!&apos;)
+console.log(&apos;I am on line 6&apos;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;放入视频&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;---
+title: 视频
+published: 2023-10-19
+// ...
+---
+&amp;lt;iframe width=&quot;100%&quot; height=&quot;468&quot; src=&quot;//player.bilibili.com/player.html?bvid=BV1fK4y1s7Qf&amp;amp;p=1&quot; scrolling=&quot;no&quot; border=&quot;0&quot; frameborder=&quot;no&quot; framespacing=&quot;0&quot; allowfullscreen=&quot;true&quot;&amp;gt; &amp;lt;/iframe&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Bilibili&lt;/h2&gt;
+&lt;p&gt;&amp;lt;iframe width=&quot;100%&quot; height=&quot;468&quot; src=&quot;//player.bilibili.com/player.html?bvid=BV1fK4y1s7Qf&amp;amp;p=1&quot; scrolling=&quot;no&quot; border=&quot;0&quot; frameborder=&quot;no&quot; framespacing=&quot;0&quot; allowfullscreen=&quot;true&quot;&amp;gt; &amp;lt;/iframe&amp;gt;&lt;/p&gt;
+&lt;h2&gt;公式&lt;/h2&gt;
+&lt;p&gt;$$I = \int \rho R^{2} dV$$&lt;/p&gt;
+&lt;p&gt;$$
+\begin{equation*}
+\pi
+=3.1415926535
+;8979323846;2643383279;5028841971;6939937510;5820974944
+;5923078164;0628620899;8628034825;3421170679;\ldots
+\end{equation*}
+$$&lt;/p&gt;
+&lt;h2&gt;脚注和其他&lt;/h2&gt;
+&lt;p&gt;段落之间用空行分隔。&lt;/p&gt;
+&lt;p&gt;第二段内容。&lt;em&gt;斜体&lt;/em&gt;、&lt;strong&gt;粗体&lt;/strong&gt;和&lt;code&gt;等宽字体&lt;/code&gt;。无序列表如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;第一项&lt;/li&gt;
+&lt;li&gt;第二项&lt;/li&gt;
+&lt;li&gt;第三项&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;块引用的写法如下。&lt;/p&gt;
+&lt;p&gt;块引用可以跨多个段落，
+按需添加即可。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;用三个连字符表示破折号（——），两个连字符表示范围（例如“章节12--14”），三个点会被转换为省略号（……）。支持Unicode字符 ☺&lt;/p&gt;
+&lt;h2&gt;二级标题示例&lt;/h2&gt;
+&lt;p&gt;这是一个有序列表：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;第一项&lt;/li&gt;
+&lt;li&gt;第二项&lt;/li&gt;
+&lt;li&gt;第三项&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这里有一个链接指向&lt;a href=&quot;https://github.com/Anfioo/AnfiooBlog&quot;&gt;外部网站&lt;/a&gt;，以及指向&lt;a href=&quot;#%E4%BA%8C%E7%BA%A7%E6%A0%87%E9%A2%98%E7%A4%BA%E4%BE%8B&quot;&gt;当前文档的章节&lt;/a&gt;。这里有一个脚注&lt;a href=&quot;%E8%BF%99%E6%98%AF%E7%AC%AC%E4%B8%80%E4%B8%AA%E8%84%9A%E6%B3%A8%E7%9A%84%E5%86%85%E5%AE%B9%EF%BC%8C%E6%AF%94%E5%A6%82%E8%A7%A3%E9%87%8A%E6%9F%90%E4%B8%AA%E6%A6%82%E5%BF%B5%E3%80%81%E6%A0%87%E6%B3%A8%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%EF%BC%8C%E6%88%96%E8%A1%A5%E5%85%85%E6%AD%A3%E6%96%87%E6%9C%AA%E5%B1%95%E5%BC%80%E7%9A%84%E7%BB%86%E8%8A%82%E3%80%82&quot;&gt;^1&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;这里有一个链接指向&lt;a href=&quot;https://github.com/Anfioo/AnfiooBlog&quot;&gt;外部网站&lt;/a&gt;，以及指向&lt;a href=&quot;#%E4%BA%8C%E7%BA%A7%E6%A0%87%E9%A2%98%E7%A4%BA%E4%BE%8B&quot;&gt;当前文档的章节&lt;/a&gt;。这里有一个脚注&lt;a href=&quot;%E8%BF%99%E6%98%AF%E7%AC%AC%E4%B8%80%E4%B8%AA%E8%84%9A%E6%B3%A8%E7%9A%84%E5%86%85%E5%AE%B9%EF%BC%8C%E6%AF%94%E5%A6%82%E8%A7%A3%E9%87%8A%E6%9F%90%E4%B8%AA%E6%A6%82%E5%BF%B5%E3%80%81%E6%A0%87%E6%B3%A8%E5%BC%95%E7%94%A8%E6%96%87%E7%8C%AE%EF%BC%8C%E6%88%96%E8%A1%A5%E5%85%85%E6%AD%A3%E6%96%87%E6%9C%AA%E5%B1%95%E5%BC%80%E7%9A%84%E7%BB%86%E8%8A%82%E3%80%82&quot;&gt;^2&lt;/a&gt;。&lt;/p&gt;
+</content:encoded></item><item><title>Docker操作-镜像操作</title><link>https://anfiooblog.dpdns.org/posts/docker%E6%93%8D%E4%BD%9C-%E9%95%9C%E5%83%8F%E6%93%8D%E4%BD%9C/</link><guid isPermaLink="true">https://anfiooblog.dpdns.org/posts/docker%E6%93%8D%E4%BD%9C-%E9%95%9C%E5%83%8F%E6%93%8D%E4%BD%9C/</guid><description>Docker镜像操作-保存、打包为tar、加载tar镜像</description><pubDate>Mon, 01 Apr 2024 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;Docker 镜像：保存、打包为tar、加载tar镜像&lt;/h1&gt;
+&lt;p&gt;本文主要介绍Docker镜像的保存、打包为tar文件以及从tar文件加载镜像的完整操作流程，方便在不同服务器间迁移镜像，或留存已配置好环境的镜像供后续使用。&lt;/p&gt;
+&lt;h2&gt;一、保存Docker镜像&lt;/h2&gt;
+&lt;p&gt;保存镜像的核心目的是将现有容器的状态固化为新镜像，可用于跨服务器部署，或留存已安装依赖、配置好环境的容器，避免重复配置。&lt;/p&gt;
+&lt;h3&gt;1.1 查看目标容器ID&lt;/h3&gt;
+&lt;p&gt;首先需要找到要保存的容器对应的ID，执行以下命令列出所有容器：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker ps -a
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;该命令会输出所有容器的信息，重点记录目标容器的ID（如示例中的&lt;code&gt;7ca736d99653&lt;/code&gt;）。&lt;/p&gt;
+&lt;h3&gt;1.2 执行镜像保存操作&lt;/h3&gt;
+&lt;h4&gt;精简版（仅核心参数）&lt;/h4&gt;
+&lt;p&gt;直接通过容器ID生成新镜像，格式为：&lt;code&gt;docker commit 容器ID 新镜像名称:版本标签&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker commit 7ca736d99653 yolov5:v6.2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;说明：&lt;code&gt;yolov5&lt;/code&gt;为镜像仓库名（可自定义），&lt;code&gt;v6.2&lt;/code&gt;为版本标签（可自定义）。&lt;/p&gt;
+&lt;h4&gt;详细版（含提交信息）&lt;/h4&gt;
+&lt;p&gt;添加提交人、提交说明等信息，便于镜像管理，格式为：&lt;code&gt;docker commit -a &quot;提交人&quot; -m &quot;提交说明&quot; 容器ID 新镜像名称:版本标签&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker commit -a &quot;xiaoming&quot; -m &quot;Update target detection model&quot; 7ca736d99653 yolov5:v6.2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;1.3 验证镜像保存结果&lt;/h3&gt;
+&lt;p&gt;执行以下命令查看本地所有镜像，确认新保存的镜像是否存在：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker images
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;若输出结果中能看到&lt;code&gt;yolov5:v6.2&lt;/code&gt;，则说明镜像保存成功。&lt;/p&gt;
+&lt;h2&gt;二、将镜像打包为tar文件&lt;/h2&gt;
+&lt;p&gt;使用&lt;code&gt;save&lt;/code&gt;命令将已保存的镜像打包为tar格式文件，方便传输和备份，格式为：&lt;code&gt;docker save -o 输出的tar文件名 镜像名称:版本标签&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker save -o yolov5-v6.2.tar yolov5:v6.2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;执行完成后，当前目录会生成&lt;code&gt;yolov5-v6.2.tar&lt;/code&gt;文件，即镜像的打包文件。&lt;/p&gt;
+&lt;h2&gt;三、从tar文件加载镜像&lt;/h2&gt;
+&lt;p&gt;将打包好的tar文件传输到目标服务器后，使用&lt;code&gt;load&lt;/code&gt;命令加载镜像，格式为：&lt;code&gt;docker load -i 待加载的tar文件名&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker load -i yolov5-v6.2.tar
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;验证加载结果&lt;/h3&gt;
+&lt;p&gt;执行以下命令查看镜像列表，确认加载的镜像是否存在：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker images
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;若能看到&lt;code&gt;yolov5:v6.2&lt;/code&gt;镜像，则说明加载成功。&lt;/p&gt;
+</content:encoded></item><item><title>Maven 的多模块管理方式经验分享</title><link>https://anfiooblog.dpdns.org/posts/maven%E7%9A%84%E5%A4%9A%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/</link><guid isPermaLink="true">https://anfiooblog.dpdns.org/posts/maven%E7%9A%84%E5%A4%9A%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F/</guid><description>Maven 的多模块（Multi-Module）管理方式</description><pubDate>Mon, 01 Apr 2024 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;多模块 Maven（pom）管理的 Java 后端+前端全栈项目，结构清晰&lt;/h1&gt;
+&lt;p&gt;​
+（源码已经上传至 github）&lt;/p&gt;
+&lt;p&gt;推荐使用github访问，这样最新版的可以拿到
+后续我会继续拓展版本安装和切换的实现&lt;/p&gt;
+&lt;p&gt;Github 地址：https://github.com/Anfioo/WingEnv]&lt;/p&gt;
+&lt;p&gt;百度网盘 链接: https://pan.baidu.com/s/1w1PRF2LrclPnqvD_c4zLxA?pwd=1234&lt;/p&gt;
+&lt;p&gt;蓝奏云   链接: https://wwrh.lanzoul.com/ip06H30h1bng&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+&lt;h1&gt;介绍&lt;/h1&gt;
+&lt;p&gt;Maven 的多模块（Multi-Module）管理方式，根目录下有一个总的 &lt;code&gt;pom.xml&lt;/code&gt;，每个子模块也有自己的 &lt;code&gt;pom.xml&lt;/code&gt;。&lt;/p&gt;
+&lt;h2&gt;根 pom.xml 的作用&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;统一依赖管理&lt;/strong&gt;：在根 pom 中声明所有模块通用的依赖版本，避免版本冲突。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;模块聚合&lt;/strong&gt;：通过 &lt;code&gt;&amp;lt;modules&amp;gt;&lt;/code&gt; 标签聚合所有子模块，方便一次性编译、打包、测试。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;父子继承&lt;/strong&gt;：子模块的 pom 通过 &lt;code&gt;&amp;lt;parent&amp;gt;&lt;/code&gt; 标签继承根 pom，简化配置。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;子模块 pom.xml 的作用&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;继承父 pom&lt;/strong&gt;：通过 &lt;code&gt;&amp;lt;parent&amp;gt;&lt;/code&gt; 继承根 pom，自动获得依赖和插件配置。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;声明自身依赖&lt;/strong&gt;：只需声明本模块特有的依赖。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;模块间依赖&lt;/strong&gt;：如 &lt;code&gt;mmjd-admin&lt;/code&gt; 依赖 &lt;code&gt;mmjd-common&lt;/code&gt;，可通过 &lt;code&gt;&amp;lt;dependency&amp;gt;&lt;/code&gt; 引用。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1&gt;开始&lt;/h1&gt;
+&lt;h2&gt;创建父模块&lt;/h2&gt;
+&lt;p&gt;1.以 idea 为例，创建如下&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;p1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;2.删掉无需的文件（因为项目的 pom 文件只是作为依赖管理使用）&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;p2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;3.最终如下&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;p3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;添加一些标签&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;p4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;代码如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&amp;gt;
+&amp;lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&amp;gt;
+    &amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+
+    &amp;lt;groupId&amp;gt;com.anfioo&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;multi-module&amp;lt;/artifactId&amp;gt;
+
+    &amp;lt;version&amp;gt;1.0.0&amp;lt;/version&amp;gt;
+
+
+    &amp;lt;packaging&amp;gt;pom&amp;lt;/packaging&amp;gt;
+
+
+    &amp;lt;!-- 父模块简单信息 --&amp;gt;
+    &amp;lt;name&amp;gt;A-N-F-I-O-O&amp;lt;/name&amp;gt;
+    &amp;lt;url&amp;gt;https://demo.com&amp;lt;/url&amp;gt;
+    &amp;lt;description&amp;gt;多模块系统&amp;lt;/description&amp;gt;
+
+
+    &amp;lt;properties&amp;gt;
+        &amp;lt;maven.compiler.source&amp;gt;21&amp;lt;/maven.compiler.source&amp;gt;
+        &amp;lt;maven.compiler.target&amp;gt;21&amp;lt;/maven.compiler.target&amp;gt;
+        &amp;lt;project.build.sourceEncoding&amp;gt;UTF-8&amp;lt;/project.build.sourceEncoding&amp;gt;
+    &amp;lt;/properties&amp;gt;
+
+    &amp;lt;dependencyManagement&amp;gt;
+   			&amp;lt;!-- 统一依赖版本 --&amp;gt;
+    &amp;lt;/dependencyManagement&amp;gt;
+
+
+&amp;lt;/project&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;解释&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;1.packaging: 默认情况下，Maven 项目会打包成 &lt;code&gt;.jar&lt;/code&gt; 或 &lt;code&gt;.war&lt;/code&gt; 文件，但：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;packaging = pom&lt;/code&gt; 的作用是：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;告诉 Maven：这是一个 &lt;strong&gt;聚合/父项目（Parent/Aggregator）&lt;/strong&gt;，&lt;strong&gt;本身不打包可执行代码&lt;/strong&gt;，而是 &lt;strong&gt;用于管理子模块&lt;/strong&gt; 和 &lt;strong&gt;统一依赖配置&lt;/strong&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;2.dependencyManagement: 在多模块项目中，如果不加以统一，子模块可能引用了不一致版本的依赖包，导致版本冲突或行为异常。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;dependencyManagement&lt;/code&gt; 的作用是：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;在父 &lt;code&gt;pom&lt;/code&gt; 中 &lt;strong&gt;统一指定依赖版本号&lt;/strong&gt;，子模块使用时只需写 &lt;code&gt;groupId&lt;/code&gt; + &lt;code&gt;artifactId&lt;/code&gt;，&lt;strong&gt;不需要再写版本&lt;/strong&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;p&gt;父模块定义：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;dependencyManagement&amp;gt;
+    &amp;lt;dependencies&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;spring-boot-starter-web&amp;lt;/artifactId&amp;gt;
+            &amp;lt;version&amp;gt;3.2.0&amp;lt;/version&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+    &amp;lt;/dependencies&amp;gt;
+&amp;lt;/dependencyManagement&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;子模块使用时：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;spring-boot-starter-web&amp;lt;/artifactId&amp;gt;
+    &amp;lt;!-- 不写版本 --&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这样可以 &lt;strong&gt;集中控制版本号&lt;/strong&gt;，保证整个多模块项目中使用相同版本的依赖。&lt;/p&gt;
+&lt;h2&gt;创建子模块&lt;/h2&gt;
+&lt;p&gt;父模块上右键新建模块&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;p5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;h3&gt;创建模块 module-common 示例&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;p6.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;module-common 为公共模块，存放通用的工具类、常量、基础实体、异常处理等，供其他模块依赖。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&quot;p7.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;p8.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;一个基本的子模块就是这样了&lt;/p&gt;
+&lt;p&gt;我们来 &lt;strong&gt;重点介绍 Maven 中 &lt;code&gt;&amp;lt;parent&amp;gt;&lt;/code&gt; 元素的作用与特性&lt;/strong&gt;。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h4&gt;解释&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;parent&amp;gt;&lt;/code&gt; 是什么？&lt;/p&gt;
+&lt;p&gt;在 Maven 的子模块中，&lt;code&gt;&amp;lt;parent&amp;gt;&lt;/code&gt; 用于 &lt;strong&gt;声明继承哪个父模块的配置&lt;/strong&gt;。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;parent&amp;gt;
+    &amp;lt;groupId&amp;gt;com.anfioo&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;multi-module&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;1.0.0&amp;lt;/version&amp;gt;
+&amp;lt;/parent&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这段代码告诉 Maven：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;当前模块是 &lt;code&gt;com.anfioo:multi-module:1.0.0&lt;/code&gt; 的子模块，它会&lt;strong&gt;继承父模块中的所有公共配置、属性、插件和依赖管理信息&lt;/strong&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;parent&amp;gt;&lt;/code&gt; 的主要特性&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;特性&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;继承属性&lt;/td&gt;
+&lt;td&gt;子模块会继承父模块的 &lt;code&gt;&amp;lt;properties&amp;gt;&lt;/code&gt;，如 Java 编译版本、编码等。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;继承依赖管理&lt;/td&gt;
+&lt;td&gt;父模块通过 &lt;code&gt;&amp;lt;dependencyManagement&amp;gt;&lt;/code&gt; 指定的依赖版本，子模块可以引用而无需写版本号。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;继承插件配置&lt;/td&gt;
+&lt;td&gt;Maven 插件的版本、执行绑定（如 &lt;code&gt;maven-compiler-plugin&lt;/code&gt;）在父模块配置后，子模块无需重复配置。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;继承构建配置&lt;/td&gt;
+&lt;td&gt;包括 &lt;code&gt;&amp;lt;build&amp;gt;&lt;/code&gt; 下的目录结构、自定义资源文件路径等。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;支持相对路径查找&lt;/td&gt;
+&lt;td&gt;默认 &lt;code&gt;parent&lt;/code&gt; 所引用的 POM 文件，会去上层目录找 &lt;code&gt;pom.xml&lt;/code&gt;，可通过 &lt;code&gt;&amp;lt;relativePath&amp;gt;&lt;/code&gt; 定义路径。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;注意点&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;注意点&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;一个模块只能有一个 &lt;code&gt;&amp;lt;parent&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Maven 不支持多重继承，只能继承一个父模块。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;&amp;lt;parent&amp;gt;&lt;/code&gt; 与 &lt;code&gt;&amp;lt;modules&amp;gt;&lt;/code&gt; 没有强制关系&lt;/td&gt;
+&lt;td&gt;你可以继承一个父模块，但不一定在其 &lt;code&gt;&amp;lt;modules&amp;gt;&lt;/code&gt; 中列出（但通常会一起使用）。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;父模块可以是本地项目，也可以是远程依赖&lt;/td&gt;
+&lt;td&gt;比如继承 &lt;code&gt;spring-boot-starter-parent&lt;/code&gt;，就是远程继承。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;此时 idea 会自动配置父模块下的子模块 module-common
+&lt;img src=&quot;p9.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;子模块代码如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&amp;gt;
+&amp;lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&amp;gt;
+    &amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+    &amp;lt;parent&amp;gt;
+        &amp;lt;groupId&amp;gt;com.anfioo&amp;lt;/groupId&amp;gt;
+        &amp;lt;artifactId&amp;gt;multi-module&amp;lt;/artifactId&amp;gt;
+        &amp;lt;version&amp;gt;1.0.0&amp;lt;/version&amp;gt;
+    &amp;lt;/parent&amp;gt;
+
+    &amp;lt;artifactId&amp;gt;module-common&amp;lt;/artifactId&amp;gt;
+
+    &amp;lt;description&amp;gt;
+        module-common 为公共模块，存放通用的工具类、常量、基础实体、异常处理等，供其他模块依赖。
+    &amp;lt;/description&amp;gt;
+
+    &amp;lt;dependencies&amp;gt;
+
+    &amp;lt;/dependencies&amp;gt;
+
+&amp;lt;/project&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1&gt;基于 spring boot 项目的多模块项目设计&lt;/h1&gt;
+&lt;p&gt;继续生成 module-admin 如下&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;p10.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;A-N-F-I-O-O 是由于我配置了名称 就是上面的 multi-module&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;p11.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;父项目 pom 设计&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;p12.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;!&lt;/p&gt;
+&lt;h2&gt;知识点：properties&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;properties&lt;/code&gt; 是指 Maven 项目中 &lt;code&gt;&amp;lt;properties&amp;gt;&lt;/code&gt; 标签，它是 Maven &lt;code&gt;pom.xml&lt;/code&gt; 中非常重要的一部分，用于 &lt;strong&gt;定义全局属性（变量）&lt;/strong&gt;，可以在整个 POM 文件中重复引用、统一管理。&lt;/p&gt;
+&lt;p&gt;统一管理版本（不用写版本号）&lt;/p&gt;
+&lt;p&gt;引入这个依赖后，Spring Boot 的大量依赖（比如 &lt;code&gt;spring-boot-starter-web&lt;/code&gt;, &lt;code&gt;spring-boot-starter-data-jpa&lt;/code&gt; 等）就 &lt;strong&gt;不需要手动指定版本号&lt;/strong&gt; 了。&lt;/p&gt;
+&lt;p&gt;例如：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;spring-boot-starter-web&amp;lt;/artifactId&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;不用写 &lt;code&gt;&amp;lt;version&amp;gt;&lt;/code&gt;，Maven 会自动使用 &lt;code&gt;spring-boot-dependencies&lt;/code&gt; 中指定的版本。&lt;/p&gt;
+&lt;h2&gt;知识点：spring-boot-dependencies 依赖&lt;/h2&gt;
+&lt;p&gt;避免版本冲突，官方推荐方式&lt;/p&gt;
+&lt;p&gt;Spring Boot 官方推荐在你自定义的 &lt;code&gt;parent pom&lt;/code&gt; 中，&lt;strong&gt;通过 &lt;code&gt;dependencyManagement + import&lt;/code&gt; 方式&lt;/strong&gt; 引入版本 BOM（Bill of Materials），而不是直接当 parent&lt;/p&gt;
+&lt;p&gt;考虑到是普通的 spring boot 多模块版本，所以额外加入了一些常用的依赖&lt;/p&gt;
+&lt;p&gt;主要有 mybatis，mybatis-plus，mysql，alibaba 数据库连接池，swagger 等等&lt;/p&gt;
+&lt;p&gt;也使用了构建插件 （保持编译版本为 java21） 和带参构造&lt;/p&gt;
+&lt;h2&gt;父模块 multi-module pom 文件&lt;/h2&gt;
+&lt;p&gt;所以父模块如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&amp;gt;
+&amp;lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&amp;gt;
+    &amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+
+    &amp;lt;groupId&amp;gt;com.anfioo&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;multi-module&amp;lt;/artifactId&amp;gt;
+
+    &amp;lt;version&amp;gt;1.0.0&amp;lt;/version&amp;gt;
+
+
+    &amp;lt;packaging&amp;gt;pom&amp;lt;/packaging&amp;gt;
+
+
+    &amp;lt;!-- 父模块简单信息 --&amp;gt;
+    &amp;lt;name&amp;gt;A-N-F-I-O-O&amp;lt;/name&amp;gt;
+    &amp;lt;url&amp;gt;https://demo.com&amp;lt;/url&amp;gt;
+    &amp;lt;description&amp;gt;多模块系统&amp;lt;/description&amp;gt;
+
+
+    &amp;lt;modules&amp;gt;
+        &amp;lt;module&amp;gt;module-common&amp;lt;/module&amp;gt;
+        &amp;lt;module&amp;gt;module-admin&amp;lt;/module&amp;gt;
+        &amp;lt;module&amp;gt;module-sys&amp;lt;/module&amp;gt;
+    &amp;lt;/modules&amp;gt;
+
+
+    &amp;lt;properties&amp;gt;
+        &amp;lt;!--        项目配置信息--&amp;gt;
+        &amp;lt;maven.compiler.source&amp;gt;21&amp;lt;/maven.compiler.source&amp;gt;
+        &amp;lt;maven.compiler.target&amp;gt;21&amp;lt;/maven.compiler.target&amp;gt;
+        &amp;lt;project.build.sourceEncoding&amp;gt;UTF-8&amp;lt;/project.build.sourceEncoding&amp;gt;
+
+        &amp;lt;!--        子模块版本配置--&amp;gt;
+        &amp;lt;module-common.version&amp;gt;1.0.0&amp;lt;/module-common.version&amp;gt;
+        &amp;lt;module-common.admin&amp;gt;1.0.0&amp;lt;/module-common.admin&amp;gt;
+        &amp;lt;module-common.sys&amp;gt;1.0.0&amp;lt;/module-common.sys&amp;gt;
+
+        &amp;lt;!--        依赖版本配置--&amp;gt;
+        &amp;lt;spring-boot.version&amp;gt;3.4.5&amp;lt;/spring-boot.version&amp;gt;
+
+        &amp;lt;!--        mybatis依赖版本配置--&amp;gt;
+        &amp;lt;mybatis-spring-boot.version&amp;gt;3.5.10.1&amp;lt;/mybatis-spring-boot.version&amp;gt;
+        &amp;lt;mybatis-spring-boot-test.version&amp;gt;3.0.4&amp;lt;/mybatis-spring-boot-test.version&amp;gt;
+        &amp;lt;mybatis-plus-extension.version&amp;gt;3.5.7&amp;lt;/mybatis-plus-extension.version&amp;gt;
+
+
+        &amp;lt;!--        数据库依赖版本配置--&amp;gt;
+        &amp;lt;druid-spring-boot-starter.version&amp;gt;1.2.23&amp;lt;/druid-spring-boot-starter.version&amp;gt;
+
+        &amp;lt;!--        swagger依赖版本配置--&amp;gt;
+        &amp;lt;springdoc.version&amp;gt;2.8.8&amp;lt;/springdoc.version&amp;gt;
+
+
+    &amp;lt;/properties&amp;gt;
+
+    &amp;lt;dependencyManagement&amp;gt;
+        &amp;lt;dependencies&amp;gt;
+            &amp;lt;!--         SpringBoot的依赖配置--&amp;gt;
+            &amp;lt;dependency&amp;gt;
+                &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;spring-boot-dependencies&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;${spring-boot.version}&amp;lt;/version&amp;gt;
+                &amp;lt;type&amp;gt;pom&amp;lt;/type&amp;gt;
+                &amp;lt;scope&amp;gt;import&amp;lt;/scope&amp;gt;
+            &amp;lt;/dependency&amp;gt;
+
+            &amp;lt;!--            本地多模块版本配置--&amp;gt;
+            &amp;lt;dependency&amp;gt;
+                &amp;lt;groupId&amp;gt;com.anfioo&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;module-common&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;${module-common.version}&amp;lt;/version&amp;gt;
+            &amp;lt;/dependency&amp;gt;
+            &amp;lt;dependency&amp;gt;
+                &amp;lt;groupId&amp;gt;com.anfioo&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;module-admin&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;${module-common.admin}&amp;lt;/version&amp;gt;
+            &amp;lt;/dependency&amp;gt;
+
+            &amp;lt;dependency&amp;gt;
+                &amp;lt;groupId&amp;gt;com.anfioo&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;module-sys&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;${module-common.sys}&amp;lt;/version&amp;gt;
+            &amp;lt;/dependency&amp;gt;
+
+
+            &amp;lt;!--        mybatis plus版本配置--&amp;gt;
+            &amp;lt;dependency&amp;gt;
+                &amp;lt;groupId&amp;gt;com.baomidou&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;mybatis-plus-spring-boot3-starter&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;${mybatis-spring-boot.version}&amp;lt;/version&amp;gt;
+            &amp;lt;/dependency&amp;gt;
+
+            &amp;lt;dependency&amp;gt;
+                &amp;lt;groupId&amp;gt;org.mybatis.spring.boot&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;mybatis-spring-boot-starter-test&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;${mybatis-spring-boot-test.version}&amp;lt;/version&amp;gt;
+                &amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt;
+            &amp;lt;/dependency&amp;gt;
+
+            &amp;lt;!--        mybatis plus 分页插件 版本配置--&amp;gt;
+            &amp;lt;dependency&amp;gt;
+                &amp;lt;groupId&amp;gt;com.baomidou&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;mybatis-plus-extension&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;${mybatis-plus-extension.version}&amp;lt;/version&amp;gt;
+            &amp;lt;/dependency&amp;gt;
+
+            &amp;lt;!--            数据库连接池版本配置--&amp;gt;
+            &amp;lt;dependency&amp;gt;
+                &amp;lt;groupId&amp;gt;com.alibaba&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;druid-spring-boot-starter&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;${druid-spring-boot-starter.version}&amp;lt;/version&amp;gt;
+            &amp;lt;/dependency&amp;gt;
+
+
+            &amp;lt;!--            swagger版本配置--&amp;gt;
+            &amp;lt;dependency&amp;gt;
+                &amp;lt;groupId&amp;gt;org.springdoc&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;springdoc-openapi-starter-webmvc-ui&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;${springdoc.version}&amp;lt;/version&amp;gt;
+            &amp;lt;/dependency&amp;gt;
+
+
+        &amp;lt;/dependencies&amp;gt;
+    &amp;lt;/dependencyManagement&amp;gt;
+
+    &amp;lt;!-- 构建插件 （保持编译版本为java21） 和带参构造 --&amp;gt;
+    &amp;lt;build&amp;gt;
+        &amp;lt;plugins&amp;gt;
+            &amp;lt;plugin&amp;gt;
+                &amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;maven-compiler-plugin&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;3.8.1&amp;lt;/version&amp;gt;
+                &amp;lt;configuration&amp;gt;
+                    &amp;lt;source&amp;gt;${java.version}&amp;lt;/source&amp;gt;
+                    &amp;lt;target&amp;gt;${java.version}&amp;lt;/target&amp;gt;
+                    &amp;lt;release&amp;gt;${java.version}&amp;lt;/release&amp;gt;
+                    &amp;lt;encoding&amp;gt;${project.build.sourceEncoding}&amp;lt;/encoding&amp;gt;
+                    &amp;lt;parameters&amp;gt;true&amp;lt;/parameters&amp;gt;
+                &amp;lt;/configuration&amp;gt;
+            &amp;lt;/plugin&amp;gt;
+        &amp;lt;/plugins&amp;gt;
+    &amp;lt;/build&amp;gt;
+
+
+&amp;lt;/project&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;子模块 module-common pom 文件&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&amp;gt;
+&amp;lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&amp;gt;
+    &amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+    &amp;lt;parent&amp;gt;
+        &amp;lt;groupId&amp;gt;com.anfioo&amp;lt;/groupId&amp;gt;
+        &amp;lt;artifactId&amp;gt;multi-module&amp;lt;/artifactId&amp;gt;
+        &amp;lt;version&amp;gt;1.0.0&amp;lt;/version&amp;gt;
+    &amp;lt;/parent&amp;gt;
+
+    &amp;lt;artifactId&amp;gt;module-common&amp;lt;/artifactId&amp;gt;
+
+    &amp;lt;description&amp;gt;
+        module-common 为公共模块，存放通用的工具类、常量、基础实体、异常处理等，供其他模块依赖。
+    &amp;lt;/description&amp;gt;
+
+    &amp;lt;dependencies&amp;gt;
+        &amp;lt;!--        spring web--&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;spring-boot-starter-web&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+        &amp;lt;!--        spring boot测试类--&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;spring-boot-starter-test&amp;lt;/artifactId&amp;gt;
+            &amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+        &amp;lt;!--        lombok--&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.projectlombok&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;lombok&amp;lt;/artifactId&amp;gt;
+            &amp;lt;scope&amp;gt;annotationProcessor&amp;lt;/scope&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+
+        &amp;lt;!--        Spring AOP --&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;spring-boot-starter-aop&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+
+        &amp;lt;!--        mybatis 测试--&amp;gt;
+
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.mybatis.spring.boot&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;mybatis-spring-boot-starter-test&amp;lt;/artifactId&amp;gt;
+            &amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+        &amp;lt;!--        mybatis 分页插件--&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.baomidou&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;mybatis-plus-extension&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+        &amp;lt;!--        mybatis--&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.baomidou&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;mybatis-plus-spring-boot3-starter&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+        &amp;lt;!--        密码加密--&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.springframework.security&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;spring-security-crypto&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+        &amp;lt;!--        Apache 提供的一个常用工具库--&amp;gt;
+
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.apache.commons&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;commons-lang3&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+
+    &amp;lt;/dependencies&amp;gt;
+
+&amp;lt;/project&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;模块作用&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定位&lt;/strong&gt;：公共模块，存放所有子模块都需要用到的通用代码。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;主要内容&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;bean/&lt;/code&gt;：通用实体类。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;constant/&lt;/code&gt;：常量类（如 &lt;code&gt;AuthEnum.java&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;core/&lt;/code&gt;：核心基础类（如 &lt;code&gt;ApiResponse&lt;/code&gt;, &lt;code&gt;BaseController&lt;/code&gt;, &lt;code&gt;BaseEntity&lt;/code&gt; 等）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;exception/&lt;/code&gt;：全局异常处理（如 &lt;code&gt;GlobalExceptionAdvice&lt;/code&gt;，自定义异常处理器）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;filter/&lt;/code&gt;：过滤器或拦截器（如 &lt;code&gt;MySimpleInterceptor&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;log/&lt;/code&gt;：日志相关（如 AOP 日志切面）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;utils/&lt;/code&gt;：工具类（如 &lt;code&gt;PasswordUtils&lt;/code&gt;）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;作用&lt;/strong&gt;：为其他模块提供基础能力，避免重复造轮子。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;子模块 module-admin pom 文件&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&amp;gt;
+&amp;lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&amp;gt;
+    &amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+    &amp;lt;parent&amp;gt;
+        &amp;lt;groupId&amp;gt;com.anfioo&amp;lt;/groupId&amp;gt;
+        &amp;lt;artifactId&amp;gt;multi-module&amp;lt;/artifactId&amp;gt;
+        &amp;lt;version&amp;gt;1.0.0&amp;lt;/version&amp;gt;
+    &amp;lt;/parent&amp;gt;
+
+    &amp;lt;artifactId&amp;gt;module-admin&amp;lt;/artifactId&amp;gt;
+    &amp;lt;description&amp;gt;
+        主启动入口模块 管理员模块
+        后台管理系统，通常包含管理端的Controller、Service、配置等。
+
+    &amp;lt;/description&amp;gt;
+
+    &amp;lt;dependencies&amp;gt;
+
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.anfioo&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;module-sys&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.anfioo&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;module-common&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+        &amp;lt;!--        spring boot测试类--&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;spring-boot-starter-test&amp;lt;/artifactId&amp;gt;
+            &amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+
+        &amp;lt;!--mysql--&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.mysql&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;mysql-connector-j&amp;lt;/artifactId&amp;gt;
+            &amp;lt;scope&amp;gt;runtime&amp;lt;/scope&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+        &amp;lt;!--        数据库连接池--&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.alibaba&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;druid-spring-boot-starter&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+        &amp;lt;!--        swagger 配置--&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;org.springdoc&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;springdoc-openapi-starter-webmvc-ui&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+
+    &amp;lt;/dependencies&amp;gt;
+
+
+&amp;lt;/project&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;模块作用&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定位&lt;/strong&gt;：管理后台模块，通常用于后台管理系统的业务实现。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;主要内容&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;config/&lt;/code&gt;：配置类（如 Swagger、MyBatis、Web 配置等）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;StartApplication.java&lt;/code&gt;：启动类，表明该模块可独立运行。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;resources/&lt;/code&gt;：配置文件（如 &lt;code&gt;application.yaml&lt;/code&gt;、MyBatis 配置等）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;test/&lt;/code&gt;：单元测试类。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;作用&lt;/strong&gt;：实现后台管理相关的业务逻辑和接口。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;子模块 module-sys pom 文件&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&amp;gt;
+&amp;lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&amp;gt;
+    &amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+    &amp;lt;parent&amp;gt;
+        &amp;lt;groupId&amp;gt;com.anfioo&amp;lt;/groupId&amp;gt;
+        &amp;lt;artifactId&amp;gt;multi-module&amp;lt;/artifactId&amp;gt;
+        &amp;lt;version&amp;gt;1.0.0&amp;lt;/version&amp;gt;
+    &amp;lt;/parent&amp;gt;
+
+    &amp;lt;artifactId&amp;gt;module-sys&amp;lt;/artifactId&amp;gt;
+
+    &amp;lt;properties&amp;gt;
+        &amp;lt;maven.compiler.source&amp;gt;21&amp;lt;/maven.compiler.source&amp;gt;
+        &amp;lt;maven.compiler.target&amp;gt;21&amp;lt;/maven.compiler.target&amp;gt;
+        &amp;lt;project.build.sourceEncoding&amp;gt;UTF-8&amp;lt;/project.build.sourceEncoding&amp;gt;
+    &amp;lt;/properties&amp;gt;
+
+
+    &amp;lt;dependencies&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.anfioo&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;module-common&amp;lt;/artifactId&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+    &amp;lt;/dependencies&amp;gt;
+
+&amp;lt;/project&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;模块作用&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定位&lt;/strong&gt;：系统业务模块，通常用于系统核心业务（如用户、权限等）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;主要内容&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;controller/&lt;/code&gt;：控制器（如 &lt;code&gt;SysUserController&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dto/&lt;/code&gt;：数据传输对象。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;entity/&lt;/code&gt;：实体类（如 &lt;code&gt;SysUser&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mapper/&lt;/code&gt;：MyBatis Mapper 接口及 XML（如 &lt;code&gt;SysUserMapper&lt;/code&gt;、&lt;code&gt;SysUserMapper.xml&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;service/&lt;/code&gt;：业务服务接口及实现（如 &lt;code&gt;SysUserService&lt;/code&gt;、&lt;code&gt;SysUserServiceImpl&lt;/code&gt;）。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;resources/mapper/&lt;/code&gt;：MyBatis 映射文件。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;作用&lt;/strong&gt;：实现系统核心业务功能，通常会被 admin 或其他模块调用。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;总预览结构图&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;p13.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;h2&gt;项目结构优点&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;高内聚低耦合&lt;/strong&gt;：公共代码抽离到 &lt;code&gt;module-common&lt;/code&gt;，各业务模块职责单一。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;易于维护和扩展&lt;/strong&gt;：新增业务模块只需新建子模块即可，互不影响。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;统一依赖管理&lt;/strong&gt;：父级 &lt;code&gt;pom.xml&lt;/code&gt; 统一依赖版本，避免冲突。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;适合团队协作&lt;/strong&gt;：不同团队成员可负责不同模块，互不干扰。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;接下来介绍每个模块可以实现的功能&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1&gt;每个模块实现功能详解&lt;/h1&gt;
+&lt;h2&gt;common 主要包和类说明&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;p14.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;h3&gt;介绍&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;1）bean/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;作用&lt;/strong&gt;：存放通用的实体类或 VO/DTO，便于模块间数据传递和复用。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;2）constant/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;AuthEnum.java&lt;/strong&gt;：定义项目中的权限、角色等常量枚举，方便统一管理和调用。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;3）core/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ApiResponse.java&lt;/strong&gt;：统一的 API 响应封装类，规范接口返回结构（如 code、msg、data）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;BaseController.java&lt;/strong&gt;：所有 Controller 的基类，封装通用方法（如统一异常处理、响应封装等）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;BaseDto.java&lt;/strong&gt;：DTO 基类，便于扩展和统一处理。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;BaseEntity.java&lt;/strong&gt;：实体基类，通常包含 id、创建时间、更新时间等通用字段。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;PageResult.java&lt;/strong&gt;：分页结果封装类，便于前后端分页数据交互。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;mybatis/ListStringTypeHandler.java&lt;/strong&gt;：MyBatis 类型处理器，支持 List &amp;lt;String&amp;gt; 与数据库字段的自动转换。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;4）exception/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;GlobalExceptionAdvice.java&lt;/strong&gt;：全局异常处理器，捕获并统一处理项目中的异常，提升系统健壮性。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;handleException/&lt;/strong&gt;：自定义异常处理器（如默认异常、空指针异常等），实现更细粒度的异常管理。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IExceptionHandler.java&lt;/strong&gt;：异常处理器接口，便于扩展和自定义异常处理逻辑。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;5）filter/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;MySimpleInterceptor.java&lt;/strong&gt;：自定义拦截器，可用于请求日志、权限校验等场景。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;6）log/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ControllerLogAspect.java&lt;/strong&gt;：AOP 切面，自动记录 Controller 层的操作日志。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;LogRecord.java&lt;/strong&gt;：日志记录相关实体或注解，配合切面实现自动化日志。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;7）utils/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;PasswordUtils.java&lt;/strong&gt;：密码加密、校验等工具类，提升安全性和代码复用。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这个是一个简单的设计，主要是想要明确这个模块的职责&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3&gt;职责&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;高复用&lt;/strong&gt;：所有通用代码集中管理，避免重复开发。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;解耦&lt;/strong&gt;：业务模块只需依赖 common，无需关心具体实现细节。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;易扩展&lt;/strong&gt;：新增通用功能只需在 common 扩展即可，所有依赖模块自动受益。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;统一规范&lt;/strong&gt;：如统一响应、统一异常、统一日志，提升项目整体规范性和可维护性。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h3&gt;5. 典型用法举例&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;业务模块只需在 &lt;code&gt;pom.xml&lt;/code&gt; 中依赖 &lt;code&gt;module-common&lt;/code&gt;，即可直接使用其中的工具类、基础类、异常处理等。&lt;/li&gt;
+&lt;li&gt;例如，&lt;code&gt;module-admin&lt;/code&gt; 和 &lt;code&gt;module-sys&lt;/code&gt; 的 Controller 都可以继承 &lt;code&gt;BaseController&lt;/code&gt;，返回数据时用 &lt;code&gt;ApiResponse&lt;/code&gt;，异常自动被 &lt;code&gt;GlobalExceptionAdvice&lt;/code&gt; 捕获处理。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h3&gt;6. 总结&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;module-common&lt;/code&gt; 是多模块项目的“地基”，为上层业务提供了坚实的支撑。合理设计和维护 common 模块，是保证大型项目高效开发和稳定运行的关键。&lt;/p&gt;
+&lt;h3&gt;详细介绍&lt;/h3&gt;
+&lt;h4&gt;枚举常量&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.common.constant;
+
+public enum AuthEnum {
+    SUCCESS(0, &quot;注册成功&quot;),
+    USERNAME_EXISTS(1, &quot;用户名已存在&quot;),
+    PASSWORD_TOO_WEAK(2, &quot;密码强度不足，需包含字母、数字和特殊字符，长度8-20位&quot;),
+    USERNAME_INVALID(3, &quot;用户名格式无效，只能包含字母、数字和下划线，长度4-20位&quot;),
+    REGISTER_FAILED(4, &quot;注册失败，请稍后重试&quot;);
+
+    private final int code;
+    private final String message;
+
+    AuthEnum(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;全局统一响应体设计&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.common.core;
+
+import lombok.Data;
+
+import java.io.Serial;
+import java.io.Serializable;
+
+/**
+ * 全局统一响应体
+ *
+ * @param &amp;lt;T&amp;gt; 返回数据类型
+ */
+
+@Data
+public class ApiResponse&amp;lt;T&amp;gt; implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 业务状态码，0 表示成功，非 0 表示失败
+     */
+    private int code;
+
+    /**
+     * 提示信息
+     */
+    private String message;
+
+    /**
+     * 返回的数据主体
+     */
+    private T data;
+
+    public ApiResponse() {
+    }
+
+    public ApiResponse(int code, String message, T data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
+
+    // ==================== 静态工厂方法 ====================
+
+    /**
+     * 成功，且无返回数据
+     */
+    public static &amp;lt;T&amp;gt; ApiResponse&amp;lt;T&amp;gt; ok() {
+        return new ApiResponse&amp;lt;&amp;gt;(0, &quot;success&quot;, null);
+    }
+
+    /**
+     * 成功，带返回数据
+     */
+    public static &amp;lt;T&amp;gt; ApiResponse&amp;lt;T&amp;gt; ok(T data) {
+        return new ApiResponse&amp;lt;&amp;gt;(0, &quot;success&quot;, data);
+    }
+
+    /**
+     * 成功，自定义提示 &amp;amp; 返回数据
+     */
+    public static &amp;lt;T&amp;gt; ApiResponse&amp;lt;T&amp;gt; ok(String message, T data) {
+        return new ApiResponse&amp;lt;&amp;gt;(0, message, data);
+    }
+
+    /**
+     * 失败，自定义错误码 &amp;amp; 错误信息
+     */
+    public static &amp;lt;T&amp;gt; ApiResponse&amp;lt;T&amp;gt; error(int code, String message) {
+        return new ApiResponse&amp;lt;&amp;gt;(code, message, null);
+    }
+
+    /**
+     * 失败，使用默认错误码 -1
+     */
+    public static &amp;lt;T&amp;gt; ApiResponse&amp;lt;T&amp;gt; error(String message) {
+        return new ApiResponse&amp;lt;&amp;gt;(-1, message, null);
+    }
+
+
+    /**
+     * 失败，自定义错误信息和数据
+     */
+    public static &amp;lt;T&amp;gt; ApiResponse&amp;lt;T&amp;gt; error(String message, T data) {
+        return new ApiResponse&amp;lt;&amp;gt;(-1, message, data);
+    }
+
+    @Override
+    public String toString() {
+        return &quot;ApiResponse{&quot; +
+                &quot;code=&quot; + code +
+                &quot;, message=&apos;&quot; + message + &apos;\&apos;&apos; +
+                &quot;, data=&quot; + data +
+                &apos;}&apos;;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;controller 层基类&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.common.core;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class BaseController {
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * 返回成功（无数据）
+     */
+    public &amp;lt;T&amp;gt; ApiResponse&amp;lt;T&amp;gt; success() {
+        return ApiResponse.ok();
+    }
+
+    /**
+     * 返回成功（带数据）
+     */
+    public &amp;lt;T&amp;gt; ApiResponse&amp;lt;T&amp;gt; success(T data) {
+        return ApiResponse.ok(data);
+    }
+
+    /**
+     * 返回成功（自定义消息 + 数据）
+     */
+    public &amp;lt;T&amp;gt; ApiResponse&amp;lt;T&amp;gt; success(String message, T data) {
+        return ApiResponse.ok(message, data);
+    }
+
+    /**
+     * 返回失败（默认 -1）
+     */
+    public &amp;lt;T&amp;gt; ApiResponse&amp;lt;T&amp;gt; error(String message) {
+        return ApiResponse.error(message);
+    }
+
+    /**
+     * 返回失败（指定 code）
+     */
+    public &amp;lt;T&amp;gt; ApiResponse&amp;lt;T&amp;gt; error(int code, String message) {
+        return ApiResponse.error(code, message);
+    }
+
+
+    /**
+     * 快捷返回布尔状态结果
+     */
+    public &amp;lt;T&amp;gt; ApiResponse&amp;lt;T&amp;gt; toResult(boolean success) {
+        return success ? success() : error(&quot;操作失败&quot;);
+    }
+
+
+    /**
+     * 快捷返回布尔状态结果
+     */
+    public &amp;lt;T&amp;gt; ApiResponse&amp;lt;T&amp;gt; toResult(boolean success, T message) {
+        return success ? success(message) : error(&quot;操作失败&quot;);
+    }
+
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;dto 层基类&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.common.core;
+
+import java.io.Serial;
+import java.io.Serializable;
+
+/**
+ * 通用 DTO 基类，只提供序列化能力
+ *
+ * 本类主要用于继承，以实现数据传输对象（DTO）的序列化功能
+ * 实现了 Serializable 接口，以确保对象可以被序列化和反序列化
+ */
+public class BaseDto implements Serializable {
+
+    /**
+     * 序列化版本标识符
+     *
+     * 用于在序列化和反序列化过程中确保类的版本一致
+     * 如果类的结构发生变化（如添加字段），可以更改此值以确保向后兼容性
+     */
+    @Serial
+    private static final long serialVersionUID = 1L;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;实体层的基类&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.common.core;
+
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+/**
+ * 基础实体类，提供所有实体类共有的基本属性
+ */
+@Data
+public class BaseEntity {
+
+    /**
+     * 创建时间，用于记录实体创建的时刻
+     */
+    private LocalDateTime createTime;
+
+    /**
+     * 更新时间，用于记录实体最后一次更新的时刻
+     */
+    private LocalDateTime updateTime;
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;还可以放入其他可能公用的类就不一一举例了&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h4&gt;全局异常处理类&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.common.exception;
+
+import com.anfioo.common.core.ApiResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+
+import java.util.List;
+
+/**
+ * 全局异常处理类
+ * 用于统一处理所有未被捕获的异常
+ */
+@ControllerAdvice
+public class GlobalExceptionAdvice {
+
+    // 所有异常处理器的列表
+    private final List&amp;lt;IExceptionHandler&amp;gt; handlerList;
+
+    /**
+     * 构造函数，初始化异常处理器列表
+     *
+     * @param handlerList 异常处理器列表
+     */
+    public GlobalExceptionAdvice(List&amp;lt;IExceptionHandler&amp;gt; handlerList) {
+        this.handlerList = handlerList;
+    }
+
+    /**
+     * 处理所有异常的处理器
+     * 遍历所有异常处理器，找到支持处理当前异常的处理器进行处理
+     * 如果没有找到合适的处理器，则返回一个通用的错误响应
+     *
+     * @param ex      异常对象
+     * @param request Web请求对象
+     * @return 响应实体，包含处理结果
+     */
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity&amp;lt;ApiResponse&amp;lt;Object&amp;gt;&amp;gt; handleAll(Throwable ex, WebRequest request) {
+        for (IExceptionHandler handler : handlerList) {
+            if (handler.supports(ex)) {
+                ApiResponse&amp;lt;Object&amp;gt; body = handler.handle(ex, request);
+                return ResponseEntity.ok(body);
+            }
+        }
+
+        // 理论不会走到这里
+        return ResponseEntity.ok(ApiResponse.error(&quot;未知异常&quot;));
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.common.exception;
+
+import com.anfioo.common.core.ApiResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.WebRequest;
+
+/**
+ * 异常处理策略接口，支持扩展
+ */
+public interface IExceptionHandler {
+    /**
+     * 判断是否支持当前异常类型
+     */
+    boolean supports(Throwable ex);
+
+    /**
+     * 处理异常并返回响应结果
+     */
+    ApiResponse&amp;lt;Object&amp;gt; handle(Throwable ex, WebRequest request);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;示例&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.common.exception.handleException;
+
+import com.anfioo.common.core.ApiResponse;
+import com.anfioo.common.exception.IExceptionHandler;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.WebRequest;
+
+/**
+ * 默认异常处理器，用于处理系统中未被其他异常处理器捕获的异常
+ * 该处理器被赋予最低的优先级（最高的Order值），确保自定义异常处理器先于它执行
+ */
+@Component
+@Order(Integer.MAX_VALUE)
+public class DefaultExceptionHandler implements IExceptionHandler {
+
+    /**
+     * 支持所有类型的异常
+     *
+     * @param ex 异常对象
+     * @return 总是返回true，表示支持所有异常
+     */
+    @Override
+    public boolean supports(Throwable ex) {
+        return true;
+    }
+
+    /**
+     * 处理异常，返回一个通用的错误响应
+     *
+     * @param ex 异常对象
+     * @param request Web请求对象
+     * @return 返回一个包含错误信息的ApiResponse对象
+     */
+    @Override
+    public ApiResponse&amp;lt;Object&amp;gt; handle(Throwable ex, WebRequest request) {
+        ex.printStackTrace(); // 或使用日志记录系统
+        return ApiResponse.error(&quot;系统异常，请稍后再试&quot;);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;自定义拦截器&lt;/h4&gt;
+&lt;p&gt;这里只是简单调用，全部放行&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.common.filter;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+
+import java.io.PrintWriter;
+
+/**
+ * 自定义拦截器，用于在请求处理前进行预处理
+ */
+@Component
+public class MySimpleInterceptor implements HandlerInterceptor {
+
+    /**
+     * 在请求处理之前进行调用
+     *
+     * @param request  HttpServletRequest对象，用于获取请求信息
+     * @param response HttpServletResponse对象，用于设置响应信息
+     * @param handler  请求处理器，可以是HandlerMethod或RequestMappingHandler
+     * @return boolean 返回值为true时继续执行下一个拦截器，若无其他拦截器则执行目标方法；返回false时中断执行链
+     * @throws Exception 可能抛出的异常
+     */
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        // 获取请求头中的Authorization字段
+        String token = request.getHeader(&quot;Authorization&quot;);
+
+        // 检查token是否存在且非空
+        if (token == null || token.isBlank()) {
+            // 如果token不存在或为空，则在响应头中添加消息说明
+            response.addHeader(&quot;Message&quot;, &quot;NO Token&quot;);
+
+            // 全都放行
+            return true;
+//            return false;
+        }
+
+        // 如果token存在且非空，则继续执行下一个拦截器或目标方法
+        return true;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;日志切片&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.common.log;
+
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.Arrays;
+
+
+/**
+ * 全局 Controller 层日志记录切面
+ */
+@Aspect
+@Component
+@Slf4j
+public class ControllerLogAspect {
+
+    // 切入所有 controller 包及子包下的公共方法
+    @Pointcut(&quot;execution(public * com.anfioo..controller..*(..))&quot;)
+    public void controllerMethods() {
+    }
+
+    @Around(&quot;controllerMethods()&quot;)
+    public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+
+        // 获取当前执行的目标类
+        Class&amp;lt;?&amp;gt; targetClass = joinPoint.getTarget().getClass();
+        Logger logger = LoggerFactory.getLogger(targetClass);
+
+        ServletRequestAttributes attributes =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+
+        String url = request.getRequestURL().toString();
+        String method = request.getMethod();
+        String ip = request.getRemoteAddr();
+        String classMethod = joinPoint.getSignature().toShortString();
+        Object[] args = joinPoint.getArgs();
+
+        logger.info(&quot;{}-{}  | Handler: {} &quot;, method, url, classMethod);
+        System.out.println(&quot;Args: &quot; + Arrays.toString(args));
+
+        Object result;
+        try {
+            result = joinPoint.proceed();
+        } catch (Exception e) {
+            logger.error(&quot;❌ 异常发生 - {} {}&quot;, classMethod, e.getMessage(), e);
+            throw e;
+        }
+
+        long end = System.currentTimeMillis();
+        System.out.println(&quot;✅ 响应: &quot; + result + &quot;\n耗时: {&quot; + (end - start) + &quot;} ms&quot;);
+        return result;
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.common.log;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface LogRecord {
+    String value() default &quot;&quot;; // 可自定义日志描述
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;工具类&lt;/p&gt;
+&lt;p&gt;如密码强度验证，redis 工具，sql 工具等等&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.common.utils;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.regex.Pattern;
+
+public class PasswordUtils {
+
+    // 定义一个静态的加密器，strength 默认 10，推荐设为 12（越大越安全也越耗时）
+    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
+    // 密码强度正则：
+    // 1. 至少8位
+    // 2. 至少一个大写字母
+    // 3. 至少一个小写字母
+    // 4. 至少一个数字
+    // 5. 至少一个特殊字符
+    // 6. 不包含空格
+    private static final Pattern STRONG_PASSWORD_PATTERN = Pattern.compile(
+            &quot;^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[\\W_])[\\S]+$&quot;
+    );
+
+
+    /**
+     * 加密密码（注册时使用）
+     *
+     * @param rawPassword 原始明文密码
+     * @return 加密后的密码（带随机盐，无法反解）
+     */
+    public static String encode(String rawPassword) {
+        return encoder.encode(rawPassword);
+    }
+
+    /**
+     * 验证密码是否匹配（登录时使用）
+     *
+     * @param rawPassword     用户传入的明文密码
+     * @param encodedPassword 数据库存储的加密密码
+     * @return 是否匹配
+     */
+    public static boolean matches(String rawPassword, String encodedPassword) {
+        return encoder.matches(rawPassword, encodedPassword);
+    }
+
+    /**
+     * 检查密码是否足够强
+     *
+     * @param password 原始明文密码
+     * @return 是否符合强度要求
+     */
+    public static boolean isStrongEnough(String password) {
+        if (password == null) {
+            return false;
+        }
+        return STRONG_PASSWORD_PATTERN.matcher(password).matches();
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;admin 主要包和类说明&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;p15.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;h3&gt;介绍&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;config/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;JacksonConfig.java&lt;/strong&gt;：自定义 Jackson 配置，通常用于 JSON 序列化/反序列化的全局设置（如时间格式、空值处理等）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;MyBatisConfig.java&lt;/strong&gt;：MyBatis 相关配置，如分页插件、类型处理器等。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;SwaggerConfig.java&lt;/strong&gt;：Swagger（springdoc-openapi）配置，自动生成接口文档，方便前后端联调和接口管理。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;WebConfig.java&lt;/strong&gt;：Web 层相关配置，如跨域（CORS）、拦截器、静态资源映射等。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;StartApplication.java&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;启动类&lt;/strong&gt;：Spring Boot 应用的入口，包含 &lt;code&gt;@SpringBootApplication&lt;/code&gt; 注解。通过该类可以直接启动 admin 模块，通常用于开发、测试和部署。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;resources/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;application.yaml&lt;/strong&gt;：主配置文件，管理端口、数据库、日志等全局配置。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;application-druid.yml&lt;/strong&gt;：Druid 数据库连接池相关配置，提升数据库连接性能和安全性。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;application-mybatis.yml&lt;/strong&gt;：MyBatis 相关配置，如 Mapper 路径、别名、缓存等。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;mybatis/mybatis-config.xml&lt;/strong&gt;：MyBatis 全局配置文件，细粒度控制 MyBatis 行为。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;test/java/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;PasswordUtilsTest.java&lt;/strong&gt;：密码工具类的单元测试，确保加密、校验等功能正确。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;SysUserControllerTest.java&lt;/strong&gt;：用户控制器的接口测试，验证接口的正确性和健壮性。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;SysUserServiceTest.java&lt;/strong&gt;：用户服务的业务逻辑测试，保证服务层功能的可靠性。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;职责&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;配置集中&lt;/strong&gt;：所有与 Web、MyBatis、Swagger、Jackson 相关的配置都集中在 &lt;code&gt;config/&lt;/code&gt; 包，便于维护和扩展。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;独立启动&lt;/strong&gt;：拥有独立的启动类，可单独运行和调试 admin 后台。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;多环境配置&lt;/strong&gt;：通过不同的 yml 文件和 mybatis 配置，支持多环境和多数据源的灵活切换。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;测试完善&lt;/strong&gt;：包含单元测试和接口测试，保证核心功能的正确性和稳定性。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;依赖 common&lt;/strong&gt;：通过依赖 &lt;code&gt;module-common&lt;/code&gt;，可以直接使用通用的工具类、基础类、异常处理等，提升开发效率。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h3&gt;5. 典型用法举例&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;通过 SwaggerConfig 自动生成接口文档，前端可直接查看和调试接口。&lt;/li&gt;
+&lt;li&gt;通过 WebConfig 配置跨域和拦截器，提升安全性和可扩展性。&lt;/li&gt;
+&lt;li&gt;通过 MyBatisConfig 配置分页插件，简化分页查询开发。&lt;/li&gt;
+&lt;li&gt;通过 application.yaml 管理不同环境的配置，方便本地开发和线上部署。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h3&gt;6. 总结&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;module-admin&lt;/code&gt; 是后台管理系统的核心模块，负责后台业务的实现和接口暴露。它通过合理的分层和配置，保证了系统的可维护性、可扩展性和高效开发。依赖于 &lt;code&gt;module-common&lt;/code&gt;，实现了代码复用和统一规范，是多模块项目中不可或缺的一环。&lt;/p&gt;
+&lt;h3&gt;详细介绍&lt;/h3&gt;
+&lt;h4&gt;所有模块的主启动类&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.admin;
+
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication(scanBasePackages = {&quot;com.anfioo&quot;})
+public class StartApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(StartApplication.class, args);
+        System.out.println(
+                &quot;&quot;&quot;
+                        🎉(♥◠‿◠)ﾉﾞ✨  多模块系统 ✨启动成功！🎊🎊 \s
+                              ٩(｡•́‿•̀｡)۶ 🌸 欢迎使用！一起升华吧～ 🌈
+                                                                 \s
+                             ___      .__   __.  _______  __    ______     ______  \s
+                            /   \\     |  \\ |  | |   ____||  |  /  __  \\   /  __  \\ \s
+                           /  ^  \\    |   \\|  | |  |__   |  | |  |  |  | |  |  |  |\s
+                          /  /_\\  \\   |  . `  | |   __|  |  | |  |  |  | |  |  |  |\s
+                         /  _____  \\  |  |\\   | |  |     |  | |  `--&apos;  | |  `--&apos;  |\s
+                        /__/     \\__\\ |__| \\__| |__|     |__|  \\______/   \\______/\s
+                                                                                   \s
+                        &quot;&quot;&quot;);
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;要配置扫描 com.anfioo，&lt;strong&gt;@SpringBootApplication(scanBasePackages = {&quot;com.anfioo&quot;})&lt;/strong&gt;&lt;/p&gt;
+&lt;h4&gt;配置入口&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.admin.config;
+
+import com.anfioo.common.filter.MySimpleInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.*;
+
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private MySimpleInterceptor simpleIntercept;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(simpleIntercept)
+                .addPathPatterns(&quot;/**&quot;) // 拦截所有路径
+                .excludePathPatterns(&quot;/v3/api-docs&quot;); // 放行 /swagger docs 路径
+
+
+    }
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping(&quot;/**&quot;)          // 所有路径
+                .allowedOriginPatterns(&quot;*&quot;) // 允许所有源（也可以写具体域名）
+                .allowedMethods(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;)
+                .allowedHeaders(&quot;*&quot;)
+                .allowCredentials(true)     // 允许携带 Cookie
+                .maxAge(3600);              // 预检请求缓存时间（秒）
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;mybatis 扫描配置&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.admin.config;
+
+
+import com.anfioo.common.core.mybatis.ListStringTypeHandler;
+import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import org.apache.ibatis.type.JdbcType;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
+
+@Configuration
+@MapperScan(&quot;com.anfioo.**.mapper&quot;)
+public class MyBatisConfig {
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        // 分页插件
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        return interceptor;
+    }
+
+    @Bean
+    public ConfigurationCustomizer configurationCustomizer() {
+        return configuration -&amp;gt; configuration.getTypeHandlerRegistry()
+                .register(List.class, JdbcType.VARCHAR, ListStringTypeHandler.class);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;mybatis-plus:
+  global-config:
+    banner: false
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&amp;gt;
+&amp;lt;!DOCTYPE configuration
+PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+&quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&amp;gt;
+&amp;lt;configuration&amp;gt;
+    &amp;lt;!-- 全局参数 --&amp;gt;
+    &amp;lt;settings&amp;gt;
+        &amp;lt;!-- 使全局的映射器启用或禁用缓存 --&amp;gt;
+        &amp;lt;setting name=&quot;cacheEnabled&quot;             value=&quot;true&quot;   /&amp;gt;
+        &amp;lt;!-- 允许JDBC 支持自动生成主键 --&amp;gt;
+        &amp;lt;setting name=&quot;useGeneratedKeys&quot;         value=&quot;true&quot;   /&amp;gt;
+        &amp;lt;!-- 配置默认的执行器.SIMPLE就是普通执行器;REUSE执行器会重用预处理语句(prepared statements);BATCH执行器将重用语句并执行批量更新 --&amp;gt;
+        &amp;lt;setting name=&quot;defaultExecutorType&quot;      value=&quot;SIMPLE&quot; /&amp;gt;
+       &amp;lt;!-- 指定 MyBatis 所用日志的具体实现 --&amp;gt;
+        &amp;lt;setting name=&quot;logImpl&quot;                  value=&quot;SLF4J&quot;  /&amp;gt;
+        &amp;lt;!-- 使用驼峰命名法转换字段 --&amp;gt;
+        &amp;lt;setting name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&amp;gt;
+    &amp;lt;/settings&amp;gt;
+    
+&amp;lt;/configuration&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;数据库配置&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;spring:
+  datasource:
+    # 使用 DruidDataSource
+    type: com.alibaba.druid.pool.DruidDataSource
+
+    # 基本连接参数
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost: 3306/multi-module-database?useUnicode = true&amp;amp;characterEncoding = utf8&amp;amp;serverTimezone = Asia/Shanghai
+    username: root
+    password: 123456
+
+#    # Druid 连接池配置
+#    druid:
+#      initial-size: 5        # 初始化大小
+#      min-idle: 5            # 最小空闲
+#      max-active: 20         # 最大活跃
+#      max-wait: 60000        # 获取连接最大等待毫秒
+#      validation-query: SELECT 1
+#      test-on-borrow: false
+#      test-on-return: false
+#      test-while-idle: true
+#      time-between-eviction-runs-millis: 60000
+#      min-evictable-idle-time-millis: 300000
+#
+#      # 以下是 Druid 自带的监控、统计功能（可选）
+#      stat-view-servlet:
+#        enabled: true
+#        url-pattern: /druid/*
+#        login-username: admin
+#        login-password: 123456
+#      web-stat-filter:
+#        enabled: true
+#        url-pattern: /*
+#        exclusions: &quot; *.js,*.css,/druid/*&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;主配置入口&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;spring:
+  profiles:
+    active: druid, mybatis
+  application:
+    name: module-admin
+
+server:
+  port: 6677
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;sys 主要包和类说明&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;p16.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;1）controller/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;SysUserController.java&lt;/strong&gt;：用户相关的接口控制器，负责接收前端请求、参数校验、调用服务层并返回统一响应。通常包含用户的增删改查（CRUD）接口。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;2）dto/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;数据传输对象&lt;/strong&gt;：用于前后端或各层之间的数据传递，解耦实体和接口参数，便于扩展和安全控制。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;3）entity/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;SysUser.java&lt;/strong&gt;：用户实体类，对应数据库中的用户表，包含用户的基本属性（如 id、用户名、密码、角色等）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;4）mapper/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;SysUserMapper.java&lt;/strong&gt;：MyBatis 的 Mapper 接口，定义了对用户表的数据库操作方法（如 select、insert、update、delete）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;resources/mapper/sys/SysUserMapper.xml&lt;/strong&gt;：MyBatis 的 XML 映射文件，编写具体的 SQL 语句，实现复杂查询或自定义操作。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;5）service/&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;SysUserService.java&lt;/strong&gt;：用户服务接口，定义业务层对用户的操作方法，通常与 Controller 对应。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;impl/SysUserServiceImpl.java&lt;/strong&gt;：用户服务实现类，具体实现业务逻辑，调用 Mapper 进行数据操作。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h3&gt;4. 职责&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;分层清晰&lt;/strong&gt;：严格按照 Controller → Service → Mapper → Entity 的分层思想，职责单一，便于维护。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DTO 解耦&lt;/strong&gt;：通过 dto 包实现数据传输对象，避免直接暴露数据库实体，提升安全性和灵活性。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;MyBatis 灵活映射&lt;/strong&gt;：通过 Mapper 接口和 XML 文件结合，既能享受接口式开发的便捷，也能灵活编写复杂 SQL。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;可扩展性强&lt;/strong&gt;：每个功能点（如用户管理）都可以独立扩展，后续可添加更多 entity、service、controller 等。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h3&gt;5. 典型用法举例&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;前端请求用户相关接口，SysUserController 负责接收和响应，调用 SysUserService 处理业务，SysUserServiceImpl 具体实现，SysUserMapper 负责数据库操作，最终通过 SysUserMapper.xml 执行 SQL。&lt;/li&gt;
+&lt;li&gt;通过 dto 包传递参数和返回结果，保证接口的灵活性和安全性。&lt;/li&gt;
+&lt;li&gt;通过 service 层实现事务控制、业务校验等核心逻辑。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h3&gt;6. 总结&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;module-sys&lt;/code&gt; 是系统核心业务的实现模块，承担了数据建模、业务逻辑、数据访问等关键任务。它结构清晰、分层合理，便于后续扩展和维护。依赖于 &lt;code&gt;module-common&lt;/code&gt;，可以直接使用通用工具类、基础实体、异常处理等，极大提升了开发效率和代码复用性。&lt;/p&gt;
+&lt;h3&gt;详细介绍&lt;/h3&gt;
+&lt;h4&gt;controller层&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.sys.controller;
+
+
+import com.anfioo.common.constant.AuthEnum;
+import com.anfioo.common.core.ApiResponse;
+import com.anfioo.common.core.BaseController;
+import com.anfioo.common.core.PageResult;
+import com.anfioo.sys.entity.SysUser;
+import com.anfioo.sys.service.SysUserService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * 用户管理控制器
+ * 提供增删改查接口，继承 BaseController 实现统一返回格式
+ */
+@RestController
+@RequestMapping(&quot;/sys-user&quot;)
+public class SysUserController extends BaseController {
+
+    private final SysUserService userService;
+
+    // 构造函数注入（推荐方式）
+    public SysUserController(SysUserService userService) {
+        this.userService = userService;
+    }
+
+    /**
+     * 根据用户 ID 获取用户信息
+     *
+     * @param userId 用户 ID
+     * @return 用户对象，如果不存在则返回错误信息
+     */
+    @GetMapping(&quot;/{userId}&quot;)
+    public ApiResponse &amp;lt;SysUser&amp;gt; getUser(@PathVariable(&quot;userId&quot;) Long userId) {
+        SysUser user = userService.getById(userId);
+        return user != null ? success(user) : error(&quot;用户不存在&quot;);
+    }
+
+    /**
+     * 查询用户列表
+     *
+     * @return 用户列表
+     */
+    @GetMapping(&quot;/list&quot;)
+    public ApiResponse &amp;lt;List&amp;lt;SysUser&amp;gt; &amp;gt; list() {
+        List &amp;lt;SysUser&amp;gt; list = userService.list();
+        return success(list);
+    }
+
+    /**
+     * 分页查询用户
+     *
+     * @param pageNum  页码
+     * @param pageSize 每页大小
+     * @param query    查询条件封装
+     * @return 分页结果对象
+     */
+    @GetMapping(&quot;/page&quot;)
+    public ApiResponse &amp;lt;PageResult&amp;lt;SysUser&amp;gt; &amp;gt; page(
+            @RequestParam(name = &quot;pageNum&quot;, defaultValue = &quot;1&quot;) int pageNum,
+            @RequestParam(name = &quot;pageSize&quot;, defaultValue = &quot;10&quot;) int pageSize,
+            @ModelAttribute SysUser query
+    ) {
+        Page &amp;lt;SysUser&amp;gt; page = new Page &amp;lt;&amp;gt;(pageNum, pageSize);
+        IPage &amp;lt;SysUser&amp;gt; result = userService.selectPageList(page, query);
+        return success(new PageResult &amp;lt;&amp;gt;(result));
+    }
+
+    /**
+     * 添加新用户
+     *
+     * @param user 新用户对象
+     * @return 操作结果
+     */
+    @PostMapping
+    public ApiResponse &amp;lt;Void&amp;gt; add(@RequestBody SysUser user) {
+        boolean result = userService.save(user);
+        return toResult(result);
+    }
+
+    /**
+     * 编辑用户信息
+     *
+     * @param user 更新后的用户对象
+     * @return 操作结果
+     */
+    @PutMapping
+    public ApiResponse &amp;lt;Void&amp;gt; edit(@RequestBody SysUser user) {
+        boolean result = userService.updateById(user);
+        return toResult(result);
+    }
+
+    /**
+     * 删除用户（软删除，标记为删除状态）
+     *
+     * @param userId 用户 ID
+     * @return 操作结果
+     */
+    @DeleteMapping(&quot;/{userId}&quot;)
+    public ApiResponse &amp;lt;Void&amp;gt; remove(@PathVariable(&quot;userId&quot;) Long userId) {
+        return toResult(userService.removeById(userId));
+    }
+
+    /**
+     * 批量删除用户（软删除，标记为删除状态）
+     *
+     * @param userIds 用户 ID 数组
+     * @return 操作结果字符串
+     */
+    @DeleteMapping(&quot;/batch&quot;)
+    public ApiResponse &amp;lt;String&amp;gt; removeBatch(@RequestBody Long [] userIds) {
+        return toResult(userService.removeBatchByIds(List.of(userIds)));
+    }
+
+    @PostMapping(&quot;/login&quot;)
+    public ApiResponse &amp;lt;String&amp;gt; login(@RequestParam String userName, @RequestParam String password) {
+        String uuid = userService.login(userName, password);
+        return uuid != null ? success(uuid) : error(&quot;用户名或密码错误&quot;);
+    }
+
+
+    @PostMapping(&quot;/register&quot;)
+    public ApiResponse &amp;lt;AuthEnum&amp;gt; register(@RequestParam String userName, @RequestParam String password) {
+        AuthEnum result = userService.register(userName, password);
+
+        if (result == AuthEnum.SUCCESS) {
+            return success(result);
+        } else {
+            return error(result.getMessage());
+        }
+
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;实体类&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.sys.entity;
+
+
+import com.anfioo.common.core.BaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode(callSuper = true)
+@Data
+@TableName(&quot;multi_module_sys_user&quot;)
+public class SysUser extends BaseEntity {
+    @TableId(value = &quot;user_id&quot;, type = IdType.AUTO)
+    private Long userId;
+
+    private String userName;
+    private String nickName;
+    private String phoneNumber;
+    private String password;
+    private String email;
+    private String avatar;
+    private String sex;
+    private String status;
+
+    @TableLogic(value = &quot;0&quot;, delval = &quot;1&quot;)
+    private String delFlag;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;mapper层&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.sys.mapper;
+
+
+import com.anfioo.sys.entity.SysUser;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+
+@Mapper
+public interface SysUserMapper extends BaseMapper &amp;lt;SysUser&amp;gt; {
+    // 不需要再写任何方法，全部使用 BaseMapper 的默认方法
+//    SysUser user = lambdaQuery()
+//            .eq(SysUser:: getUserName, userName)
+//            .one();
+//
+    SysUser getUserByUserName(@Param(&quot;userName&quot;) String userName);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;对应xml文件&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&amp;gt;
+&amp;lt;! DOCTYPE mapper PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot; &amp;gt;
+
+&amp;lt;mapper namespace=&quot;com.anfioo.sys.mapper.SysUserMapper&quot;&amp;gt;
+
+
+
+    &amp;lt;select id=&quot;getUserByUserName&quot; resultType=&quot;com.anfioo.sys.entity.SysUser&quot;&amp;gt;
+        SELECT * FROM multi_module_sys_user
+        WHERE user_name = #{userName}
+          AND del_flag = &apos;0&apos;
+          AND status = &apos;0&apos;
+        LIMIT 1
+    &amp;lt;/select&amp;gt;
+
+
+&amp;lt;/mapper&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;service层&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.sys.service;
+
+
+import com.anfioo.common.constant.AuthEnum;
+import com.anfioo.sys.entity.SysUser;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.io.Serializable;
+
+public interface SysUserService extends IService &amp;lt;SysUser&amp;gt; {
+    IPage &amp;lt;SysUser&amp;gt; selectPageList(Page &amp;lt;SysUser&amp;gt; page, SysUser query);
+
+    String login(String userName, String password);
+
+    AuthEnum register(String userName, String password);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;实现类&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;package com.anfioo.sys.service.impl;
+
+
+import com.anfioo.common.constant.AuthEnum;
+import com.anfioo.common.utils.PasswordUtils;
+import com.anfioo.sys.entity.SysUser;
+import com.anfioo.sys.mapper.SysUserMapper;
+import com.anfioo.sys.service.SysUserService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.UUID;
+
+@Service
+public class SysUserServiceImpl extends ServiceImpl &amp;lt;SysUserMapper, SysUser&amp;gt; implements SysUserService {
+
+    final  SysUserMapper sysUserMapper;
+
+    public SysUserServiceImpl(SysUserMapper sysUserMapper) {
+        this.sysUserMapper = sysUserMapper;
+    }
+
+    @Override
+    public IPage &amp;lt;SysUser&amp;gt; selectPageList(Page &amp;lt;SysUser&amp;gt; page, SysUser query) {
+        QueryWrapper &amp;lt;SysUser&amp;gt; wrapper = new QueryWrapper &amp;lt;&amp;gt;();
+
+        if (query != null) {
+            // 登录账号模糊查询
+            if (StringUtils.isNotBlank(query.getUserName())) {
+                wrapper.like(&quot;user_name&quot;, query.getUserName());
+            }
+
+            // 昵称模糊查询
+            if (StringUtils.isNotBlank(query.getNickName())) {
+                wrapper.like(&quot;nick_name&quot;, query.getNickName());
+            }
+
+            // 手机号精确查询
+            if (StringUtils.isNotBlank(query.getPhoneNumber())) {
+                wrapper.eq(&quot;phone_number&quot;, query.getPhoneNumber());
+            }
+
+            // 邮箱精确查询
+            if (StringUtils.isNotBlank(query.getEmail())) {
+                wrapper.eq(&quot;email&quot;, query.getEmail());
+            }
+
+            // 性别筛选
+            if (StringUtils.isNotBlank(query.getSex())) {
+                wrapper.eq(&quot;sex&quot;, query.getSex());
+            }
+
+            // 状态筛选（正常、停用）
+            if (StringUtils.isNotBlank(query.getStatus())) {
+                wrapper.eq(&quot;status&quot;, query.getStatus());
+            }
+        }
+
+        return this.page(page, wrapper);
+    }
+
+    /**
+     * 验证用户名格式
+     */
+    private boolean validateUsernameFormat(String username) {
+        if (username == null || username.length() &amp;lt; 4 || username.length() &amp;gt; 20) {
+            return false;
+        }
+        // 只允许字母、数字和下划线
+        return username.matches(&quot;^[a-zA-Z0-9_]+$&quot;);
+    }
+
+    @Override
+    public AuthEnum register(String userName, String password) {
+        // 1. 验证用户名格式
+        if (! validateUsernameFormat(userName)) {
+            return AuthEnum.USERNAME_INVALID;
+        }
+
+        // 2. 检查用户名是否已存在
+        boolean usernameExists = lambdaQuery()
+                .eq(SysUser:: getUserName, userName)
+                .exists();
+        if (usernameExists) {
+            return AuthEnum.USERNAME_EXISTS;
+        }
+
+        // 3. 验证密码强度
+        if (! PasswordUtils.isStrongEnough(password)) {
+            return AuthEnum.PASSWORD_TOO_WEAK;
+        }
+
+        // 4. 创建用户对象
+        SysUser user = new SysUser();
+        user.setUserName(userName);
+        user.setNickName(&quot;用户_&quot; + System.currentTimeMillis());
+        user.setPassword(PasswordUtils.encode(password));
+
+
+        // 5. 保存用户
+        boolean saveResult = save(user);
+        if (! saveResult) {
+            return AuthEnum.REGISTER_FAILED;
+        }
+
+        return AuthEnum.SUCCESS;
+    }
+
+    @Override
+    public String login(String userName, String password) {
+
+        SysUser userByUserName = sysUserMapper.getUserByUserName(userName);
+
+        if (userByUserName == null) {
+            return null;
+        }
+
+
+        boolean matches = PasswordUtils.matches(password, userByUserName.getPassword());
+        System.out.println(matches);
+
+        if (! matches) {
+            return null;
+        }
+        
+        return UUID.randomUUID().toString();
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;当有需要开发新的模块，只需要以sys为模板快速开发即可&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr /&gt;
+&lt;h2&gt;总结&lt;/h2&gt;
+&lt;p&gt;本项目采用了标准的 Spring Boot 多模块（multi-module）架构，充分体现了现代企业级 Java 项目的最佳实践。整体结构分为父模块和多个子模块，各司其职、协同工作，具有如下显著优点：&lt;/p&gt;
+&lt;h3&gt;1. 高内聚低耦合&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;公共代码（如工具类、基础实体、异常处理等）全部集中在 &lt;code&gt;module-common&lt;/code&gt;，实现了代码复用，避免重复开发。&lt;/li&gt;
+&lt;li&gt;各业务模块（如 &lt;code&gt;module-admin&lt;/code&gt;、&lt;code&gt;module-sys&lt;/code&gt;）只需依赖 common，无需关心其内部实现，降低了模块间的耦合度。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;2. 分层清晰，职责明确&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;每个子模块都按照“控制层（Controller）→ 服务层（Service）→ 数据访问层（Mapper）→ 实体层（Entity）”的分层思想设计，结构清晰，便于维护和扩展。&lt;/li&gt;
+&lt;li&gt;配置类、启动类、测试类等也有明确的归属，提升了项目的可读性和可维护性。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;3. 统一依赖和版本管理&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;父模块的 &lt;code&gt;pom.xml&lt;/code&gt; 通过 &lt;code&gt;&amp;lt;dependencyManagement&amp;gt;&lt;/code&gt; 统一管理所有依赖和版本，避免了版本冲突和依赖冗余，保证了各子模块的一致性。&lt;/li&gt;
+&lt;li&gt;支持灵活扩展和升级，只需在父模块调整依赖版本即可同步到所有子模块。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;4. 易于团队协作和扩展&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;不同团队成员可以根据业务分工，分别负责不同的子模块，互不干扰，协作高效。&lt;/li&gt;
+&lt;li&gt;新增业务只需新建子模块，按需依赖 common 即可，极大提升了项目的可扩展性。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;5. 适合企业级开发和持续集成&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;多模块结构天然适合大型项目和微服务架构，便于后续拆分、重构和服务化。&lt;/li&gt;
+&lt;li&gt;便于集成自动化测试、持续集成（CI）、持续部署（CD）等现代开发流程。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;总之，这种多模块架构不仅提升了项目的规范性和可维护性，也为后续的功能扩展和团队协作打下了坚实的基础。无论是个人项目还是企业级应用，都是值得推荐的项目结构选择。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;如需进一步了解某个模块或具体实现细节，欢迎随时交流！
+​
+具体可以访问github与我开发交流&lt;/p&gt;
+&lt;p&gt;项目地址https://github.com/Anfioo/multi-module&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+</content:encoded></item></channel></rss>
