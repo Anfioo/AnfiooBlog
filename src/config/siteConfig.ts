@@ -116,13 +116,13 @@ export const siteConfig: SiteConfig = {
 				title: "Anfioo・Heart's Desire",
 				// 主页横幅副标题
 				subtitle: [
-                    "All As Intended, All With Glee",
-                    "Joy Fills Days, Heart Fills Hope",
-                    "Walk Lightly, Live Fully, Rejoice Always",
-                    "Intent Fulfilled, Joy Unrestrained",
-                    "Chase The Light, Joy Follows Close",
-                    "All Things Go Well, All Hearts Are Glad",
-                ],
+					"All As Intended, All With Glee",
+					"Joy Fills Days, Heart Fills Hope",
+					"Walk Lightly, Live Fully, Rejoice Always",
+					"Intent Fulfilled, Joy Unrestrained",
+					"Chase The Light, Joy Follows Close",
+					"All Things Go Well, All Hearts Are Glad",
+				],
 				typewriter: {
 					//打字机开启 → 循环显示所有副标题
 					//打字机关闭 → 每次刷新随机显示一条副标题

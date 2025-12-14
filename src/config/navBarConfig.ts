@@ -32,12 +32,12 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				external: true,
 				icon: "fa6-brands:bilibili",
 			},
-            {
-                name: "统计",
-                url: "https://umami.anfiooblog.dpdns.org/share/oVgfTSaf1RHIACYU",
-                external: true,
-                icon: "material-symbols:analytics",
-            }
+			{
+				name: "统计",
+				url: "https://umami.anfiooblog.dpdns.org/share/oVgfTSaf1RHIACYU",
+				external: true,
+				icon: "material-symbols:analytics",
+			},
 		],
 	});
 

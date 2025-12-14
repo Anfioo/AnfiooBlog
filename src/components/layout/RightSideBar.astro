@@ -3,14 +3,14 @@ import type { MarkdownHeading } from "astro";
 import Profile from "@/components/content/Profile.astro";
 import Advertisement from "@/components/widget/Advertisement.astro";
 import Announcement from "@/components/widget/Announcement.astro";
-import Calendar from "@/components/widget/Calendar.astro";
-import TimeCard from "@/components/widget/TimeCard.astro";
-import Todo from "@/components/widget/Todo.astro";
 import BrowsingData from "@/components/widget/BrowsingData.astro";
+import Calendar from "@/components/widget/Calendar.astro";
 import Categories from "@/components/widget/Categories.astro";
 import SidebarTOC from "@/components/widget/SidebarTOC.astro";
 import SiteStats from "@/components/widget/SiteStats.astro";
 import Tags from "@/components/widget/Tags.astro";
+import TimeCard from "@/components/widget/TimeCard.astro";
+import Todo from "@/components/widget/Todo.astro";
 import type { WidgetComponentConfig } from "@/types/config";
 import { widgetManager } from "@/utils/widget-manager";
 
@@ -59,8 +59,8 @@ const componentMap = {
 	advertisement: Advertisement,
 	stats: SiteStats,
 	calendar: Calendar,
-    browsingData: BrowsingData,
-    todo: Todo,
+	browsingData: BrowsingData,
+	todo: Todo,
 	timecard: TimeCard,
 };
 

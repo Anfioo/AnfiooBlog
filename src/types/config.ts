@@ -703,15 +703,13 @@ export type SponsorConfig = {
 	showButtonInPost?: boolean; // 是否在文章详情页底部显示赞助按钮，默认 true
 };
 
-
-
 export type TodoItem = {
-    content: string;
-    completed: boolean;
+	content: string;
+	completed: boolean;
 };
 
 export type TodoConfig = {
-    enable: boolean;
-    title: string;
-    items: TodoItem[];
+	enable: boolean;
+	title: string;
+	items: TodoItem[];
 };
