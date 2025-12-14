@@ -1,0 +1,169 @@
+---
+import WidgetLayout from "./WidgetLayout.astro";
+
+interface Props {
+    class?: string;
+    style?: string;
+}
+const className = Astro.props.class;
+const style = Astro.props.style;
+---
+
+<WidgetLayout name="时光流逝" id="time-card" class={className} style={style}>
+    <div class="flex flex-col gap-4 p-1">
+        <div id="current-date-text" class="text-center text-xs font-bold text-neutral-700 dark:text-neutral-300 tabular-nums tracking-wide">
+            加载中...
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+            <div class="relative aspect-square flex items-center justify-center group cursor-help" id="day-progress-container">
+                <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" class="text-black/5 dark:text-white/5" />
+                    <circle id="day-progress-circle" cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" stroke-linecap="round" class="text-[var(--primary)] transition-all duration-75 ease-linear" stroke-dasharray="282.743" stroke-dashoffset="282.743" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center flex-col">
+                    <span id="day-progress-text" class="text-sm font-bold text-neutral-600 dark:text-neutral-400 tabular-nums">0时</span>
+                    <span class="text-[0.6rem] text-neutral-400 dark:text-neutral-500 scale-90 origin-center font-medium">今日</span>
+                </div>
+            </div>
+
+            <div class="relative aspect-square flex items-center justify-center group cursor-help" id="week-progress-container">
+                <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" class="text-black/5 dark:text-white/5" />
+                    <circle id="week-progress-circle" cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" stroke-linecap="round" class="text-[var(--primary)] transition-all duration-75 ease-linear" stroke-dasharray="282.743" stroke-dashoffset="282.743" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center flex-col">
+                    <span id="week-progress-text" class="text-sm font-bold text-neutral-600 dark:text-neutral-400 tabular-nums">星期</span>
+                    <span class="text-[0.6rem] text-neutral-400 dark:text-neutral-500 scale-90 origin-center font-medium">本周</span>
+                </div>
+            </div>
+
+            <div class="relative aspect-square flex items-center justify-center group cursor-help" id="month-progress-container">
+                <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" class="text-black/5 dark:text-white/5" />
+                    <circle id="month-progress-circle" cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" stroke-linecap="round" class="text-[var(--primary)] transition-all duration-75 ease-linear" stroke-dasharray="282.743" stroke-dashoffset="282.743" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center flex-col">
+                    <span id="month-progress-text" class="text-sm font-bold text-neutral-600 dark:text-neutral-400 tabular-nums">第0天</span>
+                    <span class="text-[0.6rem] text-neutral-400 dark:text-neutral-500 scale-90 origin-center font-medium">本月</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <div class="relative aspect-square flex items-center justify-center group cursor-help" id="year-progress-container">
+                <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" class="text-black/5 dark:text-white/5" />
+                    <circle id="year-progress-circle" cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" stroke-linecap="round" class="text-[var(--primary)] transition-all duration-75 ease-linear" stroke-dasharray="282.743" stroke-dashoffset="282.743" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center flex-col">
+                    <span id="year-progress-text" class="text-xl font-bold text-neutral-600 dark:text-neutral-400 tabular-nums">0月</span>
+                    <span class="text-xs text-neutral-400 dark:text-neutral-500 scale-90 origin-center font-medium">今年</span>
+                </div>
+            </div>
+
+            <div class="relative aspect-square flex items-center justify-center group cursor-help" id="life-progress-container">
+                <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" class="text-black/5 dark:text-white/5" />
+                    <circle id="life-progress-circle" cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" stroke-linecap="round" class="text-[var(--primary)] transition-all duration-75 ease-linear" stroke-dasharray="282.743" stroke-dashoffset="282.743" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center flex-col">
+                    <span id="life-progress-text" class="text-xl font-bold text-neutral-600 dark:text-neutral-400 tabular-nums">0岁</span>
+                    <span class="text-xs text-neutral-400 dark:text-neutral-500 scale-90 origin-center font-medium">人生</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</WidgetLayout>
+
+<script>
+    function updateTimeCard() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+        const weekDay = weekDays[now.getDay()];
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const milliseconds = String(now.getMilliseconds()).padStart(3, '0').slice(0, 1);
+
+        // Update Header
+        const dateText = document.getElementById('current-date-text');
+        if (dateText) {
+            dateText.textContent = `${year}年${month}月${day}日 星期${weekDay} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+        }
+
+        // Calculations
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        const dayProgress = (now.getTime() - startOfDay.getTime()) / (endOfDay.getTime() - startOfDay.getTime()) * 100;
+
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        const daysInMonth = (nextMonth.getTime() - startOfMonth.getTime()) / (1000 * 60 * 60 * 24);
+        const monthProgress = (now.getTime() - startOfMonth.getTime()) / (nextMonth.getTime() - startOfMonth.getTime()) * 100;
+
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        const nextYear = new Date(now.getFullYear() + 1, 0, 1);
+        const yearProgress = (now.getTime() - startOfYear.getTime()) / (nextYear.getTime() - startOfYear.getTime()) * 100;
+
+        const birthDate = new Date('2003-12-22T00:00:00');
+        const deathDate = new Date('2103-12-22T00:00:00'); // 100 years? User code said 80 years but logic was 2107-2007 = 100.
+        // Re-checking previous code: 2007 to 2107 is 100 years. Previous comment said "80 years" but code used 2107. I'll stick to code.
+        const lifeProgress = Math.max(0, Math.min(100, (now.getTime() - birthDate.getTime()) / (deathDate.getTime() - birthDate.getTime()) * 100));
+
+        // Update Rings
+        const updateRing = (idPrefix: string, percent: number, textDisplay: string, tooltipText: string) => {
+            const circle = document.getElementById(`${idPrefix}-circle`);
+            const text = document.getElementById(`${idPrefix}-text`);
+            const container = document.getElementById(`${idPrefix}-container`);
+
+            if (circle) {
+                const r = 45;
+                const c = 2 * Math.PI * r;
+                const offset = c - (percent / 100) * c;
+                circle.style.strokeDashoffset = String(offset);
+            }
+            if (text) {
+                text.textContent = textDisplay;
+            }
+            if (container) {
+                container.title = tooltipText;
+            }
+        };
+
+        // Day: Hours passed
+        updateRing('day-progress', dayProgress, `${now.getHours()}时`, `今天已过去 ${dayProgress.toFixed(4)}%`);
+
+        // Week: Weekday
+        const startOfWeek = new Date(now);
+        const currentDay = now.getDay(); // 0 (Sun) - 6 (Sat)
+        const diffToMonday = (currentDay + 6) % 7; // Mon=0, Tue=1, ..., Sun=6
+        startOfWeek.setDate(now.getDate() - diffToMonday);
+        startOfWeek.setHours(0, 0, 0, 0);
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 7);
+        const weekProgress = (now.getTime() - startOfWeek.getTime()) / (endOfWeek.getTime() - startOfWeek.getTime()) * 100;
+
+        updateRing('week-progress', weekProgress, `星期${weekDay}`, `本周已过去 ${weekProgress.toFixed(4)}%`);
+
+        // Month: Days passed
+        updateRing('month-progress', monthProgress, `第${now.getDate()}天`, `本月已过去 ${monthProgress.toFixed(4)}%`);
+
+        // Year: Months passed
+        updateRing('year-progress', yearProgress, `${now.getMonth()}月`, `今年已过去 ${yearProgress.toFixed(4)}%`);
+
+        // Life: Years passed
+        const age = now.getFullYear() - 2007; // Approximate
+        updateRing('life-progress', lifeProgress, `${age}岁`, `人生已过去 ${lifeProgress.toFixed(5)}%`);
+    }
+
+    updateTimeCard();
+    setInterval(updateTimeCard, 50);
+
+    document.addEventListener('astro:page-load', () => {
+        updateTimeCard();
+    });
+</script>

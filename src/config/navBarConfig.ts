@@ -22,16 +22,22 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		children: [
 			{
 				name: "GitHub",
-				url: "https://github.com/CuteLeaf/Firefly",
+				url: "https://github.com/Anfioo/AnfiooBlog",
 				external: true,
 				icon: "fa6-brands:github",
 			},
 			{
 				name: "Bilibili",
-				url: "https://space.bilibili.com/38932988",
+				url: "https://space.bilibili.com/1821689715",
 				external: true,
 				icon: "fa6-brands:bilibili",
 			},
+            {
+                name: "统计",
+                url: "https://umami.anfiooblog.dpdns.org/share/oVgfTSaf1RHIACYU",
+                external: true,
+                icon: "material-symbols:analytics",
+            }
 		],
 	});
 

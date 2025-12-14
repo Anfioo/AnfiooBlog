@@ -4,6 +4,9 @@ import Profile from "@/components/content/Profile.astro";
 import Advertisement from "@/components/widget/Advertisement.astro";
 import Announcement from "@/components/widget/Announcement.astro";
 import Calendar from "@/components/widget/Calendar.astro";
+import TimeCard from "@/components/widget/TimeCard.astro";
+import Todo from "@/components/widget/Todo.astro";
+import BrowsingData from "@/components/widget/BrowsingData.astro";
 import Categories from "@/components/widget/Categories.astro";
 import SidebarTOC from "@/components/widget/SidebarTOC.astro";
 import SiteStats from "@/components/widget/SiteStats.astro";
@@ -86,6 +89,9 @@ const componentMap = {
 	advertisement: Advertisement,
 	stats: SiteStats,
 	calendar: Calendar,
+    timecard: TimeCard,
+    browsingData: BrowsingData,
+    todo: Todo,
 };
 
 // 渲染组件的辅助函数

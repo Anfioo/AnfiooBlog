@@ -55,7 +55,7 @@ export const spineModelConfig: SpineModelConfig = {
 
 // Live2D 看板娘配置
 export const live2dModelConfig: Live2DModelConfig = {
-	enable: false, // 启用 Live2D 看板娘
+	enable: true, // 启用 Live2D 看板娘
 	model: {
 		// Live2D模型文件路径
 		path: "/pio/models/live2d/snow_miku/model.json",

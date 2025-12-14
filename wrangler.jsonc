@@ -1,7 +1,8 @@
+// wrangler.jsonc
 {
-  "name": "firefly", // 匹配 CI 环境的 Worker 名称
-  "compatibility_date": "2025-12-14", // 必填的兼容性日期
+  "name": "anfioo-blog", // 你的 Worker/Pages 项目名（自定义）
+  "compatibility_date": "2025-12-14", // 兼容日期（填当前日期即可）
   "assets": {
-    "directory": "./dist" // 静态资源目录
+    "directory": "./dist" // 指向 Astro 构建的静态资源目录
   }
 }

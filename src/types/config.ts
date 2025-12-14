@@ -317,7 +317,10 @@ export type WidgetComponentType =
 	| "sidebarToc"
 	| "advertisement"
 	| "stats"
+	| "timecard"
 	| "calendar"
+	| "todo"
+	| "browsingData"
 	| "custom";
 
 export type WidgetComponentConfig = {
@@ -698,4 +701,17 @@ export type SponsorConfig = {
 	sponsors?: SponsorItem[]; // 赞助者列表（可选）
 	showSponsorsList?: boolean; // 是否显示赞助者列表，默认 true
 	showButtonInPost?: boolean; // 是否在文章详情页底部显示赞助按钮，默认 true
+};
+
+
+
+export type TodoItem = {
+    content: string;
+    completed: boolean;
+};
+
+export type TodoConfig = {
+    enable: boolean;
+    title: string;
+    items: TodoItem[];
 };

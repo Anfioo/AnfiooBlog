@@ -1,0 +1,163 @@
+---
+import { Icon } from "astro-icon/components";
+import WidgetLayout from "./WidgetLayout.astro";
+
+interface Props {
+    class?: string;
+    style?: string;
+    }
+const className = Astro.props.class;
+const style = Astro.props.style;
+---
+
+<WidgetLayout name="访问统计" id="time-card" class={className} style={style}>
+    <div class="flex flex-col gap-3">
+        <!-- 今日/昨日数据行 -->
+        <div class="grid grid-cols-2 gap-3">
+            <!-- 今日访客 -->
+            <div class="flex flex-col gap-1 p-3 bg-[var(--btn-regular-bg)] rounded-lg transition">
+                <span class="text-xs text-neutral-500 dark:text-neutral-400 transition">今日访客</span>
+                <div id="today-uv" class="font-bold text-xl text-[var(--primary)] transition">
+                    <span class="inline-block animate-pulse">加载中...</span>
+                </div>
+            </div>
+
+            <!-- 今日访问量 -->
+            <div class="flex flex-col gap-1 p-3 bg-[var(--btn-regular-bg)] rounded-lg transition">
+                <span class="text-xs text-neutral-500 dark:text-neutral-400 transition">今日访问量</span>
+                <div id="today-pv" class="font-bold text-xl text-[var(--primary)] transition">
+                    <span class="inline-block animate-pulse">加载中...</span>
+                </div>
+            </div>
+
+            <!-- 昨日访客 -->
+            <div class="flex flex-col gap-1 p-3 rounded-lg transition">
+                <span class="text-xs text-neutral-500 dark:text-neutral-400 transition">昨日访客</span>
+                <div id="yesterday-uv" class="font-bold text-xl text-neutral-700 dark:text-neutral-300 transition">
+                    <span class="inline-block animate-pulse">加载中...</span>
+                </div>
+            </div>
+
+            <!-- 昨日访问量 -->
+            <div class="flex flex-col gap-1 p-3 rounded-lg transition">
+                <span class="text-xs text-neutral-500 dark:text-neutral-400 transition">昨日访问量</span>
+                <div id="yesterday-pv" class="font-bold text-xl text-neutral-700 dark:text-neutral-300 transition">
+                    <span class="inline-block animate-pulse">加载中...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 月度/年度数据 -->
+        <div class="flex flex-col gap-2">
+            <!-- 本月访问量 -->
+            <div class="flex items-center justify-between p-3 rounded-lg transition">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 flex items-center justify-center text-[var(--primary)] dark:text-[var(--primary)]/90 transition">
+                        <Icon name="material-symbols:calendar-month" class="text-lg leading-none"></Icon>
+                    </div>
+                    <span class="text-sm text-neutral-700 dark:text-neutral-300 transition">本月访问量</span>
+                </div>
+                <div id="last-month-pv" class="font-bold text-lg text-neutral-700 dark:text-neutral-300 transition">
+                    <span class="inline-block animate-pulse">加载中...</span>
+                </div>
+            </div>
+
+            <!-- 去年访问量 -->
+            <div class="flex items-center justify-between p-3 rounded-lg transition">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 flex items-center justify-center text-[var(--primary)] dark:text-[var(--primary)]/90 transition">
+                        <Icon name="material-symbols:calendar-today" class="text-lg leading-none"></Icon>
+                    </div>
+                    <span class="text-sm text-neutral-700 dark:text-neutral-300 transition">去年访问量</span>
+                </div>
+                <div id="last_year_pv" class="font-bold text-lg text-neutral-700 dark:text-neutral-300 transition">
+                    <span class="inline-block animate-pulse">加载中...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</WidgetLayout>
+
+
+
+
+<script>
+    // 标记：避免重复请求
+    let isLoading = false;
+
+    // 获取全站访问量统计（异步非阻塞）
+    async function loadSiteStats() {
+        // 防止重复执行
+        if (isLoading) return;
+        isLoading = true;
+
+        // 初始化元素映射（统一管理）
+        const elementIds = [
+            'today-uv', 'today-pv', 'yesterday-uv',
+            'yesterday-pv', 'last-month-pv', 'last_year_pv'
+        ];
+
+        try {
+            // 1. 异步请求数据（使用 AbortController 防止超时/取消）
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+
+            const statsResponse = await fetch('https://umami.datapivot.dpdns.org/', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                signal: controller.signal // 绑定超时控制器
+            });
+
+            clearTimeout(timeoutId); // 清除超时定时器
+
+            if (!statsResponse.ok) {
+                throw new Error(`请求失败: ${statsResponse.status}`);
+            }
+
+            const statsData = await statsResponse.json();
+            console.log('统计数据:', statsData);
+
+            // 2. 批量渲染数据（非阻塞）
+            elementIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    // 优先取数据，无数据则显示 0
+                    element.textContent = statsData[id.replace(/-/g, '_')] || 0;
+                    // 移除加载态样式
+                    element.classList.remove('animate-pulse');
+                }
+            });
+
+        } catch (error) {
+            console.error('获取全站统计失败:', error);
+            // 3. 加载失败：统一显示提示（不阻塞页面）
+            elementIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = '加载失败';
+                    element.classList.remove('animate-pulse');
+                }
+            });
+        } finally {
+            isLoading = false; // 重置状态
+        }
+    }
+
+    // 方式1：页面解析完成后立即执行（非阻塞）
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        // 微任务执行，不阻塞主线程
+        queueMicrotask(loadSiteStats);
+    } else {
+        // 方式2：DOM 解析完成后执行（仍非阻塞）
+        document.addEventListener('DOMContentLoaded', () => {
+            queueMicrotask(loadSiteStats);
+        });
+    }
+
+    // 兜底：如果上述监听失效，load 事件触发时执行
+    window.addEventListener('load', () => {
+        if (!isLoading) queueMicrotask(loadSiteStats);
+    });
+
+</script>
+

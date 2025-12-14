@@ -43,13 +43,29 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			// 动画延迟时间
 			animationDelay: 50,
 		},
+        {
+            // 组件类型：站点统计组件
+            type: "todo",
+            // 是否启用该组件
+            enable: true,
+            // 组件显示顺序
+            order: 3,
+            // 组件位置
+            position: "top",
+            // 是否在文章详情页显示
+            showOnPostPage: true,
+            // CSS 类名
+            class: "onload-animation",
+            // 动画延迟时间
+            animationDelay: 200,
+        },
 		{
 			// 组件类型：分类组件
 			type: "categories",
 			// 是否启用该组件
 			enable: true,
 			// 组件显示顺序
-			order: 3,
+			order: 4,
 			// 组件位置
 			position: "sticky",
 			// CSS 类名
@@ -68,7 +84,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			// 是否启用该组件
 			enable: true,
 			// 组件显示顺序
-			order: 4,
+			order: 5,
 			// 组件位置
 			position: "sticky",
 			// CSS 类名
@@ -87,7 +103,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			// 是否启用该组件
 			enable: false,
 			// 组件显示顺序
-			order: 5,
+			order: 6,
 			// 组件位置
 			position: "sticky",
 			// CSS 类名
@@ -133,13 +149,30 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			// 动画延迟时间
 			animationDelay: 250,
 		},
+
+        {
+            // 组件类型：站点统计组件
+            type: "browsingData",
+            // 是否启用该组件
+            enable: true,
+            // 组件显示顺序
+            order: 3,
+            // 组件位置
+            position: "top",
+            // 是否在文章详情页显示
+            showOnPostPage: true,
+            // CSS 类名
+            class: "onload-animation",
+            // 动画延迟时间
+            animationDelay: 200,
+        },
 		{
 			// 组件类型：侧边栏目录组件（只在文章详情页显示）
 			type: "sidebarToc",
 			// 是否启用该组件
 			enable: true,
 			// 组件显示顺序
-			order: 3,
+			order: 4,
 			// 组件位置
 			position: "sticky",
 			// 是否在文章详情页显示
@@ -155,7 +188,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			// 是否启用该组件
 			enable: false,
 			// 组件显示顺序
-			order: 4,
+			order: 5,
 			// 组件位置
 			position: "sticky",
 			// 是否在文章详情页显示
@@ -167,6 +200,22 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			// 配置ID：使用第二个广告配置
 			configId: "ad2",
 		},
+        {
+            // 组件类型：站点统计组件
+            type: "timecard",
+            // 是否启用该组件
+            enable: true,
+            // 组件显示顺序
+            order: 6,
+            // 组件位置
+            position: "top",
+            // 是否在文章详情页显示
+            showOnPostPage: true,
+            // CSS 类名
+            class: "onload-animation",
+            // 动画延迟时间
+            animationDelay: 200,
+        }
 	],
 
 	// 默认动画配置

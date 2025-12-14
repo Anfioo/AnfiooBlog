@@ -1,6 +1,6 @@
 # 关于我 / About Me
 
-你好！我是 **夏叶** ，一个在数字世界中默默无闻的一片叶子。
+你好！我是 **Anfioo** 
 
 ## 🛠️ 关于本站
 
@@ -28,10 +28,25 @@
 
 如果你想和我交流技术问题，分享有趣的想法，或者只是想打个招呼，欢迎通过以下方式联系我：
 
-- 💻 **GitHub**: [CuteLeaf](https://github.com/CuteLeaf)
-- ✉️ **Email**: [xiaye@msn.com](mailto:xiaye@msn.com)
+- 💻 **GitHub**: [CuteLeaf](https://github.com/Anfioo)
+- ✉️ **Email**: [xiaye@msn.com](mailto:anfioozys@gmail.com)
 
 ---
 
 *感谢你的来访！希望在这里能找到对你有用的内容！*
+
+
+# About
+
+项目源码请参考 [Anfioo](https://github.com/Anfioo/AnfiooBlog).
+
+::github{repo="Anfioo/AnfiooBlog"}
+
+> ### 个人信息
+
+
+>- [知乎](https://www.zhihu.com/people/54-37-39-24)
+>- [CSDN](https://blog.csdn.net/m0_73579391)
+>- [稀土掘金](https://juejin.cn/user/983410267923659)
+>- [知乎](https://www.cnblogs.com/Anfioo)
 
